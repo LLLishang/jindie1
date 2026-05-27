@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智慧校园 · AI原生 — 校园智能体交互平台</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F8FAFC;
+    --white: #FFFFFF;
+    --border: rgba(0,0,0,.08);
+    --border-glow: rgba(79,70,229,.25);
+    --text: #1E293B;
+    --text-dim: #94A3B8;
+    --text-secondary: #6B6F80;
+    --text-muted: #9CA0B0;
+    --accent: #4F46E5;
+    --accent-glow: #6366F1;
+    --primary: #4F6EF7;
+    --primary-light: #EEF1FE;
+    --cyan: #0891B2;
+    --green: #059669;
+    --amber: #D97706;
+    --red: #EF4444;
+    --user-bubble: #EEF2FF;
+    --agent-bubble: #F8FAFC;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Noto Sans SC", -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(79,70,229,.06), transparent),
+      radial-gradient(ellipse 40% 50% at 20% 80%, rgba(8,145,178,.04), transparent),
+      radial-gradient(ellipse 30% 40% at 80% 20%, rgba(79,70,229,.03), transparent);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none; z-index: 0;
+    mask-image: radial-gradient(ellipse 60% 60% at 50% 40%, black, transparent);
+  }
+
+  .main-content { position: relative; z-index: 1; }
+
+  /* ── Hero ────────────────────────────── */
+  .hero {
+    padding: 70px 24px 60px; text-align: center; position: relative;
+  }
+  .hero .logo-text {
+    font-family: "DM Serif Display", serif;
+    font-size: clamp(40px, 6vw, 64px); font-weight: 400; letter-spacing: -.01em;
+    background: linear-gradient(135deg, #1E293B 20%, #4F46E5 50%, #0891B2 80%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 12px;
+  }
+  .hero .subtitle { font-size: 17px; color: var(--text-dim); max-width: 580px; margin: 0 auto 28px; }
+  .hero .pill-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .hero .pill {
+    font-size: 12px; font-weight: 500; padding: 5px 16px; border-radius: 50px;
+    border: 1px solid var(--border); color: var(--text-dim); letter-spacing: .03em;
+  }
+
+  /* ── Sections ────────────────────────── */
+  .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 50px 0; }
+  .section-header { text-align: center; margin-bottom: 44px; }
+  .section-header .label {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 10px;
+  }
+  .section-header h2 {
+    font-family: "DM Serif Display", serif;
+    font-size: 34px; font-weight: 400; letter-spacing: -.01em; margin-bottom: 8px;
+  }
+  .section-header p { color: var(--text-dim); font-size: 15px; }
+
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 768px) { .features { grid-template-columns: 1fr; } }
+
+  .feature-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 24px;
+    transition: border-color .25s, box-shadow .25s; position: relative; overflow: hidden;
+  }
+  .feature-card::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0; transition: opacity .25s;
+  }
+  .feature-card:hover { border-color: var(--border-glow); box-shadow: 0 0 30px rgba(79,70,229,.1); }
+  .feature-card:hover::before { opacity: 1; }
+  .fc-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px;
+  }
+  .fc-icon.indigo { background: rgba(79,70,229,.1); color: var(--accent); }
+  .fc-icon.cyan   { background: rgba(8,145,178,.1);  color: var(--cyan); }
+  .fc-icon.green  { background: rgba(5,150,105,.1);  color: var(--green); }
+  .feature-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .feature-card p  { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+  .feature-card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 14px; }
+  .feature-card .tag {
+    font-size: 11px; padding: 2px 10px; border-radius: 50px;
+    background: rgba(0,0,0,.04); color: var(--text-dim);
+  }
+
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  @media (max-width: 768px) { .steps { grid-template-columns: 1fr; } }
+  .step {
+    padding: 28px 20px; text-align: center; background: var(--white); position: relative;
+    border-right: 1px solid var(--border);
+  }
+  .step:last-child { border-right: none; }
+  @media (max-width: 768px) { .step { border-right: none; border-bottom: 1px solid var(--border); } .step:last-child { border-bottom: none; } }
+  .step-num {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(79,70,229,.1); color: var(--accent);
+    font-weight: 800; font-size: 15px; font-family: "JetBrains Mono", monospace;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
+  }
+  .step h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .step p  { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+  .scenarios { display: flex; flex-direction: column; gap: 20px; }
+  .scenario-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px;
+  }
+  .scenario-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .scenario-card h3 .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .scenario-card .input-bubble {
+    background: rgba(79,70,229,.06); border-left: 3px solid var(--accent);
+    padding: 12px 18px; border-radius: 0 8px 8px 0; font-style: italic;
+    color: var(--accent); font-size: 14px; margin-bottom: 18px;
+  }
+  .scenario-card table { width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .scenario-card thead th { text-align: left; padding: 10px 16px; background: rgba(0,0,0,.03); color: var(--text-dim); font-weight: 600; font-size: 12px; }
+  .scenario-card tbody td { padding: 9px 16px; border-top: 1px solid var(--border); }
+
+  footer {
+    text-align: center; padding: 36px 24px; color: var(--text-dim);
+    font-size: 12px; border-top: 1px solid var(--border); position: relative; z-index: 1;
+  }
+
+  .highlight { color: var(--accent); }
+  .highlight-cyan { color: var(--cyan); }
+  .highlight-green { color: var(--green); }
+  .highlight-red { color: var(--red); }
+  strong { color: var(--accent); }
+
+  /* ════════════════ Chat Panel ════════════════ */
+  .chat-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,.4);
+    z-index: 200; opacity: 0; pointer-events: none; transition: opacity .3s;
+    backdrop-filter: blur(4px);
+  }
+  .chat-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .chat-panel {
+    position: fixed; bottom: 98px; right: 28px;
+    width: 400px; max-width: calc(100vw - 40px);
+    height: 620px; max-height: calc(100vh - 140px);
+    background: #F2F3F7;
+    border-radius: 22px;
+    z-index: 210;
+    display: flex; flex-direction: column;
+    opacity: 0; transform: translateY(16px) scale(.94);
+    pointer-events: none;
+    transition: opacity .3s, transform .3s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 20px 60px rgba(0,0,0,.12), 0 0 0 1px rgba(0,0,0,.04);
+    overflow: hidden;
+  }
+  .chat-panel.open { opacity: 1; transform: none; pointer-events: auto; }
+
+  /* ── Chat header ─────────────────────── */
+  .chat-header {
+    padding: 14px 18px; border-bottom: 1px solid rgba(0,0,0,.06);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0; background: #F2F3F7;
+  }
+  .chat-header-left { display: flex; align-items: center; gap: 10px; }
+  .chat-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, #4F6EF7, #7B93FA);
+    display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff;
+  }
+  .chat-header h3 { font-size: 15px; font-weight: 700; }
+  .chat-header .status { font-size: 11px; color: var(--green); display: flex; align-items: center; gap: 4px; }
+  .chat-header .status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+  .chat-close {
+    width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(0,0,0,.1);
+    background: none; color: var(--text-dim); cursor: pointer; font-size: 15px;
+    display: flex; align-items: center; justify-content: center; transition: all .2s;
+  }
+  .chat-close:hover { color: var(--text); border-color: rgba(0,0,0,.2); }
+
+  /* ── Service cards in panel ──────────── */
+  .svc-cards {
+    display: flex; gap: 8px; padding: 12px 16px 10px; flex-shrink: 0;
+  }
+  .svc-card {
+    flex: 1; padding: 12px 8px; border-radius: 12px;
+    background: var(--white); border: 1.5px solid transparent;
+    text-align: center; cursor: pointer; transition: all .2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.03); position: relative;
+  }
+  .svc-card .svc-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 6px; font-size: 18px;
+  }
+  .svc-card.leave   .svc-icon { background: #EEF1FE; }
+  .svc-card.reserve .svc-icon { background: #ECFDFD; }
+  .svc-card.repair  .svc-icon { background: #FEF2F2; }
+  .svc-card .svc-label { font-size: 12px; font-weight: 600; color: var(--text); }
+  .svc-card .svc-desc  { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+
+  .svc-card.active { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(79,110,247,.08); }
+  .svc-card .svc-check {
+    position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--primary); color: #fff; font-size: 10px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transform: scale(.5); transition: all .2s;
+  }
+  .svc-card.active .svc-check { opacity: 1; transform: scale(1); }
+
+  /* ── Chat messages ───────────────────── */
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 8px 16px 12px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .chat-messages::-webkit-scrollbar { width: 3px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,.08); border-radius: 10px; }
+
+  .msg { display: flex; gap: 8px; max-width: 92%; animation: msgIn .3s ease both; }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .msg.agent { align-self: flex-start; }
+  .msg.user  { align-self: flex-end; flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .msg.agent .msg-avatar { background: #EEF1FE; }
+  .msg.user  .msg-avatar { background: #E0E7FF; }
+
+  .msg-bubble {
+    padding: 9px 13px; border-radius: 14px; font-size: 13px; line-height: 1.55;
+  }
+  .msg.agent .msg-bubble { background: var(--white); border-bottom-left-radius: 4px; }
+  .msg.user  .msg-bubble { background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+  .msg-bubble .time { font-size: 10px; margin-top: 3px; opacity: .4; font-family: "JetBrains Mono", monospace; }
+
+  /* ── Typing ──────────────────────────── */
+  .typing-dots { display: flex; gap: 3px; padding: 2px 0; }
+  .typing-dots span {
+    width: 5px; height: 5px; border-radius: 50%; background: var(--text-muted);
+    animation: bounce 1.4s ease infinite both;
+  }
+  .typing-dots span:nth-child(1) { animation-delay: 0s; }
+  .typing-dots span:nth-child(2) { animation-delay: .2s; }
+  .typing-dots span:nth-child(3) { animation-delay: .4s; }
+  @keyframes bounce { 0%,80%,100% { transform: scale(.6); opacity: .4; } 40% { transform: scale(1); opacity: 1; } }
+
+  /* ── Processing steps ────────────────── */
+  .proc-steps { font-size: 12px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px; }
+  .proc-steps .ps { display: flex; align-items: center; gap: 5px; }
+  .proc-steps .ps.done { color: var(--green); }
+  .proc-steps .ps .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+  /* ── Form card ───────────────────────── */
+  .form-card {
+    background: #F8F9FC; border-radius: 10px; padding: 12px; margin-top: 6px;
+    border: 1px solid rgba(0,0,0,.06);
+  }
+  .form-card .fc-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+  .form-card .fc-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 11px; }
+  .form-card .fc-label { color: var(--text-muted); flex-shrink: 0; }
+  .form-card .fc-value { color: var(--text); font-weight: 500; text-align: right; margin-left: 12px; }
+  .form-card .fc-actions { display: flex; gap: 6px; margin-top: 10px; }
+  .fc-actions button { flex: 1; padding: 7px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; font-family: inherit; }
+  .fc-actions .btn-submit { background: var(--primary); border: none; color: #fff; }
+  .fc-actions .btn-submit:hover { opacity: .9; }
+  .fc-actions .btn-submit:disabled { opacity: .4; cursor: default; }
+  .fc-actions .btn-cancel { background: #E8E9EE; border: none; color: var(--text-secondary); }
+  .submitted-tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 50px; background: #ECFDF7; color: var(--green); margin-top: 6px; }
+
+  /* ── Quick templates ─────────────────── */
+  .quick-tpl-wrap { padding: 4px 16px 8px; flex-shrink: 0; }
+  .quick-tpl-wrap .tpl-label { font-size: 10px; font-weight: 600; color: var(--text-muted); letter-spacing: .04em; margin-bottom: 5px; }
+  .tpl-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+  .tpl-chip {
+    font-size: 11px; padding: 5px 10px; border-radius: 50px;
+    background: var(--white); border: 1px solid rgba(0,0,0,.06);
+    color: var(--text-secondary); cursor: pointer; transition: all .2s;
+    font-family: inherit; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,.02);
+  }
+  .tpl-chip:hover { border-color: var(--primary); color: var(--primary); background: #F8F9FF; }
+
+  /* ── Input ───────────────────────────── */
+  .chat-input-area {
+    padding: 8px 14px 14px; flex-shrink: 0;
+    display: flex; gap: 8px; align-items: flex-end;
+  }
+  .chat-input-wrap {
+    flex: 1; background: var(--white); border-radius: 20px;
+    padding: 7px 14px; display: flex; align-items: flex-end; gap: 6px;
+    border: 1px solid rgba(0,0,0,.06); transition: border-color .2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.02);
+  }
+  .chat-input-wrap:focus-within { border-color: var(--primary); }
+  .chat-input-wrap textarea {
+    flex: 1; background: none; border: none; color: var(--text);
+    font-family: inherit; font-size: 13px; resize: none;
+    min-height: 20px; max-height: 70px; outline: none; line-height: 1.4;
+  }
+  .chat-input-wrap textarea::placeholder { color: var(--text-muted); }
+  .chat-input-wrap .mic-btn {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: none; background: #F2F3F7; color: var(--text-secondary);
+    cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all .2s;
+  }
+  .chat-input-wrap .mic-btn.recording { color: #fff; background: var(--red); animation: recPulse 1s ease infinite; }
+  @keyframes recPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,.3); } 50% { box-shadow: 0 0 0 6px rgba(239,68,68,0); } }
+
+  .send-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--primary); border: none; color: #fff; font-size: 16px;
+    cursor: pointer; flex-shrink: 0; transition: all .2s;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 3px 10px rgba(79,110,247,.3);
+  }
+  .send-btn:hover { transform: scale(1.05); }
+  .send-btn:disabled { opacity: .3; transform: none; cursor: default; }
+
+  /* ── Floating button ─────────────────── */
+  .float-btn {
+    position: fixed; bottom: 28px; right: 28px;
+    width: 58px; height: 58px; border-radius: 50%;
+    background: linear-gradient(135deg, #4F6EF7, #7B93FA);
+    border: none; color: #fff; font-size: 24px; cursor: pointer;
+    z-index: 190; box-shadow: 0 8px 28px rgba(79,110,247,.4);
+    transition: all .3s; display: flex; align-items: center; justify-content: center;
+    animation: floatPulse 2.8s ease infinite;
+  }
+  @keyframes floatPulse {
+    0%,100% { box-shadow: 0 8px 28px rgba(79,110,247,.4); }
+    50% { box-shadow: 0 8px 40px rgba(79,110,247,.6); }
+  }
+  .float-btn:hover { transform: scale(1.08); }
+  .float-btn.hidden { opacity: 0; transform: scale(.6); pointer-events: none; }
+
+  /* ── Toast ───────────────────────────── */
+  .toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    padding: 10px 22px; border-radius: 50px;
+    background: #1A1A2E; color: #fff; font-size: 13px; font-weight: 600;
+    z-index: 300; pointer-events: none;
+    animation: toastIn .3s ease, toastOut .3s ease 1.6s forwards;
+  }
+  @keyframes toastIn  { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
+  @keyframes toastOut { to   { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
+</style>
+</head>
+<body>
+
+<div class="main-content">
+  <!-- Hero -->
+  <header class="hero">
+    <div class="logo-text">智慧校园 · AI原生</div>
+    <p class="subtitle">基于金蝶AI苍穹平台的新质校园智能体 — 一句话即可完成请假、预约、报修</p>
+    <div class="pill-row">
+      <span class="pill">语音交互</span>
+      <span class="pill">意图识别</span>
+      <span class="pill">苍穹大模型</span>
+    </div>
+  </header>
+
+  <!-- 平台核心功能 -->
+  <section>
+    <div class="container">
+      <div class="section-header">
+        <div class="label">Platform</div>
+        <h2>平台核心功能</h2>
+        <p>两大业务板块 + 一个AI交互中枢，覆盖校园全场景</p>
+      </div>
+      <div class="features">
+        <div class="feature-card">
+          <div class="fc-icon indigo">📋</div>
+          <h3>智能请假系统</h3>
+          <p>AI自动解析请假要素，告别繁琐的下拉框选择</p>
+          <div class="tags">
+            <span class="tag">请假人</span><span class="tag">起止时间</span><span class="tag">星期推算</span><span class="tag">事由</span><span class="tag">审批人</span>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon cyan">🏢</div>
+          <h3>空间 / 资源预约</h3>
+          <p>一键预约会议室、教室、报告厅、体育馆等场地资源</p>
+          <div class="tags">
+            <span class="tag">借用</span><span class="tag">申请</span><span class="tag">预定</span><span class="tag">场地</span><span class="tag">时段</span><span class="tag">事由</span>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon green">🔧</div>
+          <h3>一句话智能报修</h3>
+          <p>后勤保障一键触达，AI识别设备类型与紧急程度</p>
+          <div class="tags">
+            <span class="tag">漏水</span><span class="tag">故障</span><span class="tag">断电</span><span class="tag">空调</span><span class="tag">门锁</span><span class="tag">插座</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Agent 工作流 -->
+  <section>
+    <div class="container">
+      <div class="section-header">
+        <div class="label">Workflow</div>
+        <h2>Agent 工作流</h2>
+        <p>从语音输入到表单提交，四步完成智能填报</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="step-num">01</div><h4>语音识别</h4><p>点击麦克风输入语音，Agent将语音实时转化为文本</p></div>
+        <div class="step"><div class="step-num">02</div><h4>意图识别</h4><p>大模型根据关键词判断业务类型，调出对应表单</p></div>
+        <div class="step"><div class="step-num">03</div><h4>槽位填充</h4><p>AI从自然语言中提取实体并自动填入表单字段</p></div>
+        <div class="step"><div class="step-num">04</div><h4>可视化确认</h4><p>核对填好的结构化卡片，确认无误后提交</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 场景示例 -->
+  <section>
+    <div class="container">
+      <div class="section-header">
+        <div class="label">Examples</div>
+        <h2>智能填报场景</h2>
+        <p>以下是三个典型场景的解析示例，试试点击右下角悬浮球与Agent对话</p>
+      </div>
+      <div class="scenarios">
+        <div class="scenario-card">
+          <h3><span class="dot" style="background:var(--accent)"></span>场景一：智能请假</h3>
+          <div class="input-bubble">"我这周五下午发烧了，想请假去医院，一直请到下周一早上8点"</div>
+          <table>
+            <thead><tr><th>表单字段</th><th>提取内容</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--text-dim)">起始时间</td><td>本周五 14:00</td></tr>
+              <tr><td style="color:var(--text-dim)">结束时间</td><td>下周一 08:00</td></tr>
+              <tr><td style="color:var(--text-dim)">请假事由</td><td>发烧，去医院就诊</td></tr>
+              <tr><td style="color:var(--text-dim)">请假类型</td><td><span class="highlight">病假</span>（AI推理）</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="scenario-card">
+          <h3><span class="dot" style="background:var(--cyan)"></span>场景二：空间预约</h3>
+          <div class="input-bubble">"我要申请借用第一教学楼的302报告厅，明天下午两点到四点，用来开年级大会"</div>
+          <table>
+            <thead><tr><th>表单字段</th><th>提取内容</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--text-dim)">场地类型</td><td>报告厅</td></tr>
+              <tr><td style="color:var(--text-dim)">具体位置</td><td>第一教学楼 302</td></tr>
+              <tr><td style="color:var(--text-dim)">使用时间</td><td>明天 14:00 - 16:00</td></tr>
+              <tr><td style="color:var(--text-dim)">使用事由</td><td>开年级大会</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="scenario-card">
+          <h3><span class="dot" style="background:var(--red)"></span>场景三：故障报修</h3>
+          <div class="input-bubble">"男生宿舍4栋502的空调坏了，一直漏水，插座也短路断电了，赶紧找人来修"</div>
+          <table>
+            <thead><tr><th>表单字段</th><th>提取内容</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--text-dim)">报修位置</td><td>男生宿舍4栋502</td></tr>
+              <tr><td style="color:var(--text-dim)">故障设备</td><td>空调（漏水）、插座（短路断电）</td></tr>
+              <tr><td style="color:var(--text-dim)">紧急程度</td><td><span class="highlight-red">紧急</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    智慧校园 · AI原生 | 基于金蝶AI苍穹平台 | 点击右下角悬浮球开始对话体验
+  </footer>
+</div>
+
+<!-- ════════════════ Chat Panel ════════════════ -->
+<div class="chat-backdrop" id="chatBackdrop"></div>
+
+<div class="chat-panel" id="chatPanel">
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="chat-header-left">
+      <div class="chat-avatar">🎓</div>
+      <div>
+        <h3>校园智能助手</h3>
+        <div class="status">在线 · 金蝶AI苍穹</div>
+      </div>
+    </div>
+    <button class="chat-close" id="chatClose">✕</button>
+  </div>
+
+  <!-- Service cards -->
+  <div class="svc-cards" id="svcCards">
+    <div class="svc-card leave active" data-svc="leave">
+      <div class="svc-check">✓</div>
+      <div class="svc-icon">📋</div>
+      <div class="svc-label">请假</div>
+      <div class="svc-desc">智能填写请假单</div>
+    </div>
+    <div class="svc-card reserve" data-svc="reservation">
+      <div class="svc-check">✓</div>
+      <div class="svc-icon">📅</div>
+      <div class="svc-label">预约</div>
+      <div class="svc-desc">场地资源预约</div>
+    </div>
+    <div class="svc-card repair" data-svc="maintenance">
+      <div class="svc-check">✓</div>
+      <div class="svc-icon">🔧</div>
+      <div class="svc-label">报修</div>
+      <div class="svc-desc">一键故障报修</div>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="chat-messages" id="chatMessages">
+    <div class="msg agent">
+      <div class="msg-avatar">🎓</div>
+      <div class="msg-bubble">
+        你好！我是校园智能助手，请选择你要办理的业务，然后告诉我具体信息即可 👋
+        <div class="time">刚刚</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick templates -->
+  <div class="quick-tpl-wrap" id="quickTplWrap">
+    <div class="tpl-label">⚡ 快捷模板</div>
+    <div class="tpl-chips" id="tplChips">
+      <button class="tpl-chip" data-text="我这周五下午发烧了，想请假去医院，一直请到下周一早上8点">🤒 周五下午发烧请假去医院</button>
+      <button class="tpl-chip" data-text="我明天家里有急事，需要请一天事假">🏠 明天家里急事请事假</button>
+      <button class="tpl-chip" data-text="我今天感冒了很不舒服，想请一天病假">😷 感冒不舒服请病假</button>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="chat-input-area">
+    <div class="chat-input-wrap">
+      <textarea id="chatInput" rows="1" placeholder="描述你的需求..."></textarea>
+      <button class="mic-btn" id="micBtn" title="语音输入">🎤</button>
+    </div>
+    <button class="send-btn" id="sendBtn">↑</button>
+  </div>
+</div>
+
+<!-- Floating button -->
+<button class="float-btn" id="floatBtn" title="打开校园智能助手">💬</button>
+
+<script>
+(function() {
+  const floatBtn     = document.getElementById('floatBtn');
+  const chatPanel    = document.getElementById('chatPanel');
+  const chatBackdrop = document.getElementById('chatBackdrop');
+  const chatClose    = document.getElementById('chatClose');
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput    = document.getElementById('chatInput');
+  const sendBtn      = document.getElementById('sendBtn');
+  const micBtn       = document.getElementById('micBtn');
+  const tplChips     = document.getElementById('tplChips');
+
+  let isOpen = false, isProcessing = false, isRecording = false, recognition = null;
+  let currentService = 'leave';
+
+  // ── Templates per service ─────────────
+  const templates = {
+    leave: [
+      { label: '🤒 周五下午发烧请假去医院', text: '我这周五下午发烧了，想请假去医院，一直请到下周一早上8点' },
+      { label: '🏠 明天家里急事请事假',       text: '我明天家里有急事，需要请一天事假' },
+      { label: '😷 感冒不舒服请病假',        text: '我今天感冒了很不舒服，想请一天病假休息' },
+    ],
+    reservation: [
+      { label: '🏢 借用教学楼报告厅开会',     text: '我要申请借用第一教学楼302报告厅，明天下午两点到四点，用来开年级大会' },
+      { label: '🔬 预约实验室做实验',        text: '我想预约后天上午的化工实验室，做毕业设计实验，大概需要3小时' },
+      { label: '🏟️ 借用体育馆办比赛',        text: '我们班这周六下午想借用体育馆篮球场，举办班级篮球赛' },
+    ],
+    maintenance: [
+      { label: '💧 宿舍空调漏水插座短路',     text: '男生宿舍4栋502的空调坏了，一直漏水，插座也短路断电了，赶紧找人来修一下' },
+      { label: '💡 教室灯和投影坏了',        text: '第三教学楼208教室的灯不亮了，投影也打不开，明天要上课，麻烦尽快修' },
+      { label: '🚿 宿舍水管破裂漏水',        text: '女生宿舍2栋3楼公共卫生间的水管破了，一直在漏水，地面都湿了' },
+    ],
+  };
+
+  function updateTemplates(svc) {
+    const tmpls = templates[svc] || templates.leave;
+    tplChips.innerHTML = tmpls.map(t =>
+      `<button class="tpl-chip" data-text="${t.text}">${t.label}</button>`
+    ).join('');
+    tplChips.querySelectorAll('.tpl-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chatInput.value = chip.dataset.text;
+        chatInput.style.height = 'auto';
+        chatInput.style.height = Math.min(chatInput.scrollHeight, 70) + 'px';
+        chatInput.focus();
+        scrollBottom();
+      });
+    });
+  }
+
+  // ── Open / Close ──────────────────────
+  function openChat() {
+    isOpen = true;
+    chatPanel.classList.add('open');
+    chatBackdrop.classList.add('open');
+    floatBtn.classList.add('hidden');
+    setTimeout(() => { chatInput.focus(); scrollBottom(); }, 350);
+  }
+  function closeChat() {
+    isOpen = false;
+    chatPanel.classList.remove('open');
+    chatBackdrop.classList.remove('open');
+    floatBtn.classList.remove('hidden');
+    if (isRecording) stopRecording();
+  }
+  floatBtn.addEventListener('click', openChat);
+  chatClose.addEventListener('click', closeChat);
+  chatBackdrop.addEventListener('click', closeChat);
+
+  // ── Service cards ─────────────────────
+  document.getElementById('svcCards').querySelectorAll('.svc-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.getElementById('svcCards').querySelectorAll('.svc-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentService = card.dataset.svc;
+      updateTemplates(currentService);
+    });
+  });
+  updateTemplates(currentService);
+
+  function scrollBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
+  function now() { const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+
+  function addMsg(role, html) {
+    const div = document.createElement('div');
+    div.className = 'msg ' + role;
+    const icon = role === 'agent' ? '🎓' : '👤';
+    div.innerHTML = `<div class="msg-avatar">${icon}</div><div class="msg-bubble">${html}<div class="time">${now()}</div></div>`;
+    chatMessages.appendChild(div); scrollBottom(); return div;
+  }
+  function addTyping() {
+    const div = document.createElement('div');
+    div.className = 'msg agent'; div.id = 'typingMsg';
+    div.innerHTML = `<div class="msg-avatar">🎓</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+    chatMessages.appendChild(div); scrollBottom(); return div;
+  }
+  function removeTyping() { const el=document.getElementById('typingMsg'); if(el) el.remove(); }
+  function showToast(text) {
+    const t=document.createElement('div'); t.className='toast'; t.textContent=text;
+    document.body.appendChild(t); setTimeout(()=>t.remove(),2000);
+  }
+
+  // ── Voice ─────────────────────────────
+  function startRecording() {
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) { showToast('浏览器不支持语音识别'); return; }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR(); recognition.lang = 'zh-CN'; recognition.interimResults = false; recognition.continuous = false;
+    recognition.onstart = () => { isRecording=true; micBtn.classList.add('recording'); chatInput.placeholder='正在聆听...'; };
+    recognition.onresult = (e) => { chatInput.value=e.results[0][0].transcript; chatInput.focus(); sendMessage(); };
+    recognition.onerror = () => { stopRecording(); showToast('语音识别失败'); };
+    recognition.onend = () => { stopRecording(); };
+    recognition.start();
+  }
+  function stopRecording() {
+    isRecording=false; micBtn.classList.remove('recording'); chatInput.placeholder='描述你的需求...';
+    if (recognition) { try{recognition.stop();}catch(e){}; recognition=null; }
+  }
+  micBtn.addEventListener('click', () => isRecording ? stopRecording() : startRecording());
+
+  // ── NLP ───────────────────────────────
+  const INTENTS = {
+    leave:       { name:'请假申请', icon:'📋', keywords:['请假','病假','事假','休假','不舒服','发烧','感冒','咳嗽','头疼','去医院','看病','休息','调休','年假','有事','家里','急事'] },
+    reservation: { name:'场地预约', icon:'📅', keywords:['借用','申请','预定','预约','会议室','场地','教室','报告厅','操场','体育馆','实验室','开会','年级大会','讨论','举办','活动','篮球赛'] },
+    maintenance: { name:'故障报修', icon:'🔧', keywords:['坏','修','漏水','灯不亮','故障','空调','投影','断电','门锁','水管','马桶','窗户','插座','短路','坏了','不好使','维修','报修','找人来修'] },
+  };
+
+  function classifyIntent(text) {
+    let best=null, bestScore=0;
+    for(const [k,v] of Object.entries(INTENTS)){ let s=0; for(const kw of v.keywords){ if(text.includes(kw)) s+=kw.length; } if(s>bestScore){ bestScore=s; best=k; } }
+    return bestScore>0 ? best : null;
+  }
+
+  function extractLeaveEntities(text) {
+    const e={}; e['请假人']='当前用户';
+    if(/发烧|感冒|咳嗽|头疼|肚子疼|牙疼|不舒服|生病|难受|发炎/.test(text)) e['请假类型']='病假';
+    else if(/事假|有事|家里|急事/.test(text)) e['请假类型']='事假';
+    else if(/年假|调休|休假/.test(text)) e['请假类型']='年假/调休'; else e['请假类型']='事假';
+    let sd='今天',st='08:00';
+    if(/明天/.test(text)) sd='明天'; else if(/后天/.test(text)) sd='后天';
+    else if(/这周([一二三四五六日天])/.test(text)) sd='本周'+(text.match(/这周([一二三四五六日天])/)||[])[1];
+    else if(/下周([一二三四五六日天])/.test(text)) sd='下周'+(text.match(/下周([一二三四五六日天])/)||[])[1];
+    const tm=text.match(/(早上|上午|中午|下午|晚上|傍晚|凌晨)?\s*(\d{1,2})点/);
+    if(tm){ let h=parseInt(tm[2]),p=tm[1]||''; if(p.includes('下午')||p.includes('晚上')) h+=12; else if(p.includes('中午')&&h<2) h+=12; st=String(h).padStart(2,'0')+':00'; }
+    else if(/下午/.test(text)&&!tm) st='14:00';
+    e['起始时间']=sd+' '+st;
+    let ed=sd,et='18:00';
+    if(/下周一/.test(text)) ed='下周一';
+    const em=text.match(/(?:到|一直到|请到)\s*(?:下周一|下周.|明天|后天)?\s*(早上|上午|中午|下午|晚上)?\s*(\d{1,2})点/);
+    if(em){ let h=parseInt(em[2]),p=em[1]||''; if(p.includes('下午')||p.includes('晚上')) h+=12; et=String(h).padStart(2,'0')+':00'; }
+    else if(/下周一早上/.test(text)&&/8点/.test(text)){ ed='下周一'; et='08:00'; }
+    else if(/一天/.test(text)) et='18:00';
+    e['结束时间']=ed+' '+et;
+    const rp=[]; if(/发烧/.test(text)) rp.push('发烧'); if(/感冒/.test(text)) rp.push('感冒'); if(/咳嗽/.test(text)) rp.push('咳嗽'); if(/头疼/.test(text)) rp.push('头疼'); if(/去医院/.test(text)) rp.push('去医院就诊'); if(rp.length===0) rp.push(/不舒服/.test(text)?'身体不适':'个人事务');
+    e['请假事由']=rp.join('，');
+    const wm={一:'一',二:'二',三:'三',四:'四',五:'五',六:'六',日:'日',天:'日'};
+    const sw=text.match(/周([一二三四五六日天])/); e['起始星期']=sw?'星期'+wm[sw[1]]:'（自动推算）';
+    const ew=text.match(/下周([一二三四五六日天])/); e['结束星期']=ew?'星期'+wm[ew[1]]:'（自动推算）';
+    e['请假时长']='（自动计算）'; e['审批人']='班主任 / 辅导员';
+    return e;
+  }
+
+  function extractReservationEntities(text) {
+    const e={}; e['预约人']='当前用户';
+    if(/报告厅/.test(text)) e['场地类型']='报告厅'; else if(/会议室/.test(text)) e['场地类型']='会议室'; else if(/教室/.test(text)) e['场地类型']='教室'; else if(/操场/.test(text)) e['场地类型']='操场'; else if(/体育馆/.test(text)) e['场地类型']='体育馆'; else if(/实验室/.test(text)) e['场地类型']='实验室'; else e['场地类型']='场地';
+    const bm=text.match(/(第[一二三四五六七八九十]+|[A-Za-z]+)\s*(教学|实验|办公|综合)?(楼|中心|区)/);
+    const rm=text.match(/(\d{2,4})\s*(室|房间|厅|报告厅|教室|会议室)/);
+    let loc=''; if(bm) loc+=bm[0]; if(rm) loc+=(loc?' ':'')+rm[1]+(rm[2]||'');
+    if(!loc){ const am=text.match(/([^\s，。,]+(?:楼|栋|区|馆))\s*(\d+)?/); if(am) loc=am[0]; }
+    e['具体位置']=loc||'待确认';
+    let ud='今天',us='09:00',ue='11:00';
+    if(/明天/.test(text)) ud='明天'; else if(/后天/.test(text)) ud='后天';
+    const tr=text.match(/(\d{1,2})点[到至\-~]+\s*(\d{1,2})点/);
+    if(tr){ us=String(parseInt(tr[1])).padStart(2,'0')+':00'; ue=String(parseInt(tr[2])).padStart(2,'0')+':00'; }
+    if(/下午/.test(text)){ if(!tr){us='14:00';ue='16:00';} else{ let s=parseInt(tr[1]),e2=parseInt(tr[2]); if(s<8)s+=12; if(e2<8)e2+=12; us=String(s).padStart(2,'0')+':00'; ue=String(e2).padStart(2,'0')+':00'; } }
+    e['使用时间']=ud+' '+us+' - '+ue;
+    const pm=text.match(/(?:用来|为了|开|举办|组织|进行|做)\s*(.{2,15}?)(?:，|。|$|的)/);
+    e['使用事由']=pm?pm[1]:'待确认'; e['参与人数']='待确认';
+    return e;
+  }
+
+  function extractMaintenanceEntities(text) {
+    const e={};
+    const lm=text.match(/((?:男生|女生)?宿舍\d+[栋号楼号]?\d*)/);
+    const bm2=text.match(/(第[一二三四五六七八九十]+\s*(?:教学|实验)?楼)/);
+    e['报修位置']=lm?lm[0]:(bm2?bm2[0]:'待确认');
+    const devs=[];
+    if(/空调/.test(text)) devs.push('空调（'+(/漏水/.test(text)?'漏水':'故障')+'）');
+    if(/插座/.test(text)) devs.push('插座（'+(/短路/.test(text)?'短路':'断电')+'）');
+    if(/水管/.test(text)) devs.push('水管（漏水）'); if(/马桶/.test(text)) devs.push('马桶（故障）');
+    if(/门锁/.test(text)) devs.push('门锁（损坏）'); if(/投影/.test(text)) devs.push('投影仪（故障）');
+    if(/窗户/.test(text)) devs.push('窗户（损坏）'); if(/灯/.test(text)) devs.push('灯具（不亮）');
+    if(devs.length===0){ const dm=text.match(/(.{1,6})(?:坏|故障|漏水|不亮|不好使)/); if(dm) devs.push(dm[1]+'（故障）'); }
+    e['故障设备']=devs.length?devs:['待确认'];
+    if(/短路|断电|漏电|着火|火灾|爆炸|赶紧|马上|立刻|紧急|严重/.test(text)) e['紧急程度']='🔴 紧急';
+    else if(/漏水|不停地|一直/.test(text)) e['紧急程度']='🟡 较急'; else e['紧急程度']='🟢 一般';
+    e['故障现象']=text.length>40?text.substring(0,40)+'...':text;
+    e['报修人']='当前用户'; e['报修时间']=new Date().toLocaleString('zh-CN',{hour12:false}); e['工单状态']='待派单';
+    return e;
+  }
+
+  function renderFormCard(intent, entities) {
+    const cfg={leave:{title:'📋 请假申请单',color:'#4F6EF7'},reservation:{title:'📅 空间预约单',color:'#0EA5B9'},maintenance:{title:'🔧 故障报修单',color:'#EF4444'}};
+    const c=cfg[intent];
+    let rows='';
+    for(const [k,v] of Object.entries(entities)){
+      let dv=Array.isArray(v)?v.map((x,i)=>`设备${i+1}：${x}`).join('<br>'):v;
+      rows+=`<div class="fc-row"><span class="fc-label">${k}</span><span class="fc-value">${dv}</span></div>`;
+    }
+    return `<div class="form-card"><div class="fc-title" style="color:${c.color}">${c.title}</div>${rows}
+      <div class="fc-actions">
+        <button class="btn-cancel" onclick="var f=this.closest('.form-card');f.querySelector('.btn-submit').disabled=true;this.textContent='已取消';this.disabled=true;this.style.opacity='.5'">取消</button>
+        <button class="btn-submit" onclick="var f=this.closest('.form-card');this.disabled=true;this.textContent='已提交 ✓';f.querySelector('.btn-cancel').disabled=true;f.querySelector('.btn-cancel').style.opacity='.5';var t=document.createElement('div');t.className='submitted-tag';t.textContent='✓ 提交成功';f.appendChild(t);showToast('提交成功！')">确认提交</button>
+      </div></div>`;
+  }
+
+  // ── Process ───────────────────────────
+  async function processMessage(text) {
+    isProcessing=true; sendBtn.disabled=true;
+    const typingDiv=addTyping(); await sleep(500);
+    const intent=classifyIntent(text);
+    if(!intent){
+      removeTyping();
+      addMsg('agent',`不太确定您要办理哪个业务 😅<br><br>请先在上方选择：<b style="color:#4F6EF7">📋 请假</b> · <b style="color:#0EA5B9">📅 预约</b> · <b style="color:#EF4444">🔧 报修</b>`);
+      isProcessing=false; sendBtn.disabled=false; return;
+    }
+    const info=INTENTS[intent];
+    let entities;
+    if(intent==='leave') entities=extractLeaveEntities(text);
+    else if(intent==='reservation') entities=extractReservationEntities(text);
+    else entities=extractMaintenanceEntities(text);
+    removeTyping();
+    const procDiv=addMsg('agent',`<div class="proc-steps" id="procSteps">
+      <div class="ps"><span class="dot"></span> 意图识别：<b style="color:#4F6EF7">${info.name}</b></div>
+      <div class="ps" style="color:var(--text-muted)"><span class="dot"></span> 正在抽取关键信息...</div></div>`);
+    await sleep(500);
+    const stepsEl=document.getElementById('procSteps');
+    if(stepsEl){ stepsEl.innerHTML=`<div class="ps done"><span class="dot"></span> 意图识别：<b style="color:#4F6EF7">${info.name}</b></div><div class="ps done"><span class="dot"></span> 信息抽取完成 · 已提取 ${Object.keys(entities).length} 个字段</div>`; }
+    await sleep(300);
+    const finalEl=document.getElementById('procSteps');
+    if(finalEl){ const bubble=finalEl.closest('.msg-bubble'); bubble.innerHTML=`已为您识别为 <b>${info.name}</b>，表单信息如下：${renderFormCard(intent, entities)}<div class="time">${now()}</div></div>`; }
+    scrollBottom(); isProcessing=false; sendBtn.disabled=false;
+  }
+
+  function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+  function sendMessage() {
+    const text=chatInput.value.trim();
+    if(!text||isProcessing) return;
+    addMsg('user',text); chatInput.value=''; chatInput.style.height='auto';
+    processMessage(text);
+  }
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(); } });
+  chatInput.addEventListener('input', ()=>{ chatInput.style.height='auto'; chatInput.style.height=Math.min(chatInput.scrollHeight,70)+'px'; });
+
+  document.addEventListener('keydown', e=>{ if(e.ctrlKey&&e.key==='k'){ e.preventDefault(); isOpen?closeChat():openChat(); } });
+})();
+</script>
+</body>
+</html>
