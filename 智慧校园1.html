@@ -7,24 +7,26 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #F8FAFC;
-    --white: #FFFFFF;
-    --border: rgba(0,0,0,.08);
-    --border-glow: rgba(79,70,229,.25);
-    --text: #1E293B;
-    --text-dim: #94A3B8;
-    --text-secondary: #6B6F80;
-    --text-muted: #9CA0B0;
-    --accent: #4F46E5;
+    --bg: #0D0F1A;
+    --bg-card: #131625;
+    --bg-card2: #181B2E;
+    --white: #1A1D30;
+    --border: rgba(255,255,255,.07);
+    --border-glow: rgba(99,102,241,.45);
+    --text: #E8EAF6;
+    --text-dim: #6B7DB8;
+    --text-secondary: #8892C0;
+    --text-muted: #5A6690;
+    --accent: #818CF8;
     --accent-glow: #6366F1;
-    --primary: #4F6EF7;
-    --primary-light: #EEF1FE;
-    --cyan: #0891B2;
-    --green: #059669;
-    --amber: #D97706;
-    --red: #EF4444;
-    --user-bubble: #EEF2FF;
-    --agent-bubble: #F8FAFC;
+    --primary: #6366F1;
+    --primary-light: rgba(99,102,241,.15);
+    --cyan: #22D3EE;
+    --green: #34D399;
+    --amber: #FBBF24;
+    --red: #F87171;
+    --user-bubble: rgba(99,102,241,.2);
+    --agent-bubble: #1A1D30;
     --radius: 16px;
     --radius-sm: 10px;
   }
@@ -45,20 +47,20 @@
     content: "";
     position: fixed; inset: 0;
     background:
-      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(79,70,229,.06), transparent),
-      radial-gradient(ellipse 40% 50% at 20% 80%, rgba(8,145,178,.04), transparent),
-      radial-gradient(ellipse 30% 40% at 80% 20%, rgba(79,70,229,.03), transparent);
+      radial-gradient(ellipse 70% 50% at 50% 10%, rgba(99,102,241,.18), transparent),
+      radial-gradient(ellipse 40% 40% at 10% 80%, rgba(34,211,238,.08), transparent),
+      radial-gradient(ellipse 30% 40% at 90% 20%, rgba(129,140,248,.1), transparent);
     pointer-events: none; z-index: 0;
   }
   body::after {
     content: "";
     position: fixed; inset: 0;
     background-image:
-      linear-gradient(rgba(0,0,0,.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,0,0,.03) 1px, transparent 1px);
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
     background-size: 60px 60px;
     pointer-events: none; z-index: 0;
-    mask-image: radial-gradient(ellipse 60% 60% at 50% 40%, black, transparent);
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, black, transparent);
   }
 
   .main-content { position: relative; z-index: 1; }
@@ -70,7 +72,7 @@
   .hero .logo-text {
     font-family: "DM Serif Display", serif;
     font-size: clamp(40px, 6vw, 64px); font-weight: 400; letter-spacing: -.01em;
-    background: linear-gradient(135deg, #1E293B 20%, #4F46E5 50%, #0891B2 80%);
+    background: linear-gradient(135deg, #C7D2FE 10%, #818CF8 45%, #22D3EE 85%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     margin-bottom: 12px;
   }
@@ -78,7 +80,8 @@
   .hero .pill-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .hero .pill {
     font-size: 12px; font-weight: 500; padding: 5px 16px; border-radius: 50px;
-    border: 1px solid var(--border); color: var(--text-dim); letter-spacing: .03em;
+    border: 1px solid rgba(129,140,248,.3); color: var(--text-dim); letter-spacing: .03em;
+    background: rgba(99,102,241,.08);
   }
 
   /* ── Sections ────────────────────────── */
@@ -99,66 +102,81 @@
   @media (max-width: 768px) { .features { grid-template-columns: 1fr; } }
 
   .feature-card {
-    background: var(--white); border: 1px solid var(--border);
+    background: var(--bg-card); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 28px 24px;
-    transition: border-color .25s, box-shadow .25s; position: relative; overflow: hidden;
+    transition: border-color .25s, box-shadow .25s, transform .25s; position: relative; overflow: hidden;
+    cursor: pointer;
   }
   .feature-card::before {
     content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
     background: linear-gradient(90deg, transparent, var(--accent), transparent);
     opacity: 0; transition: opacity .25s;
   }
-  .feature-card:hover { border-color: var(--border-glow); box-shadow: 0 0 30px rgba(79,70,229,.1); }
+  .feature-card:hover { border-color: var(--border-glow); box-shadow: 0 0 40px rgba(99,102,241,.18); transform: translateY(-3px); }
   .feature-card:hover::before { opacity: 1; }
+  .feature-card .open-chat-hint {
+    margin-top: 16px; font-size: 11px; color: var(--accent);
+    display: flex; align-items: center; gap: 5px; opacity: 0; transition: opacity .2s;
+  }
+  .feature-card:hover .open-chat-hint { opacity: 1; }
   .fc-icon {
     width: 40px; height: 40px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px;
   }
-  .fc-icon.indigo { background: rgba(79,70,229,.1); color: var(--accent); }
-  .fc-icon.cyan   { background: rgba(8,145,178,.1);  color: var(--cyan); }
-  .fc-icon.green  { background: rgba(5,150,105,.1);  color: var(--green); }
-  .feature-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .fc-icon.indigo { background: rgba(99,102,241,.15); color: var(--accent); }
+  .fc-icon.cyan   { background: rgba(34,211,238,.12);  color: var(--cyan); }
+  .fc-icon.green  { background: rgba(52,211,153,.12);  color: var(--green); }
+  .feature-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
   .feature-card p  { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
   .feature-card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 14px; }
   .feature-card .tag {
     font-size: 11px; padding: 2px 10px; border-radius: 50px;
-    background: rgba(0,0,0,.04); color: var(--text-dim);
+    background: rgba(255,255,255,.06); color: var(--text-muted);
   }
 
   .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
   @media (max-width: 768px) { .steps { grid-template-columns: 1fr; } }
   .step {
-    padding: 28px 20px; text-align: center; background: var(--white); position: relative;
+    padding: 28px 20px; text-align: center; background: var(--bg-card); position: relative;
     border-right: 1px solid var(--border);
   }
   .step:last-child { border-right: none; }
   @media (max-width: 768px) { .step { border-right: none; border-bottom: 1px solid var(--border); } .step:last-child { border-bottom: none; } }
   .step-num {
     width: 34px; height: 34px; border-radius: 50%;
-    background: rgba(79,70,229,.1); color: var(--accent);
+    background: rgba(99,102,241,.18); color: var(--accent);
     font-weight: 800; font-size: 15px; font-family: "JetBrains Mono", monospace;
     display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
   }
-  .step h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .step h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
   .step p  { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
 
   .scenarios { display: flex; flex-direction: column; gap: 20px; }
   .scenario-card {
-    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px;
+    cursor: pointer; transition: border-color .25s, box-shadow .25s, transform .25s;
   }
-  .scenario-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .scenario-card:hover { border-color: var(--border-glow); box-shadow: 0 0 30px rgba(99,102,241,.12); transform: translateY(-2px); }
+  .scenario-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; color: var(--text); }
   .scenario-card h3 .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .scenario-card .input-bubble {
-    background: rgba(79,70,229,.06); border-left: 3px solid var(--accent);
+    background: rgba(99,102,241,.1); border-left: 3px solid var(--accent);
     padding: 12px 18px; border-radius: 0 8px 8px 0; font-style: italic;
     color: var(--accent); font-size: 14px; margin-bottom: 18px;
   }
   .scenario-card table { width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .scenario-card thead th { text-align: left; padding: 10px 16px; background: rgba(0,0,0,.03); color: var(--text-dim); font-weight: 600; font-size: 12px; }
-  .scenario-card tbody td { padding: 9px 16px; border-top: 1px solid var(--border); }
+  .scenario-card thead th { text-align: left; padding: 10px 16px; background: rgba(255,255,255,.04); color: var(--text-dim); font-weight: 600; font-size: 12px; }
+  .scenario-card tbody td { padding: 9px 16px; border-top: 1px solid var(--border); color: var(--text); }
+  .scenario-card .open-chat-badge {
+    display: inline-flex; align-items: center; gap: 4px; margin-top: 14px;
+    font-size: 11px; color: var(--accent); padding: 4px 10px; border-radius: 50px;
+    border: 1px solid rgba(129,140,248,.3); background: rgba(99,102,241,.08);
+    opacity: 0; transition: opacity .2s;
+  }
+  .scenario-card:hover .open-chat-badge { opacity: 1; }
 
   footer {
-    text-align: center; padding: 36px 24px; color: var(--text-dim);
+    text-align: center; padding: 36px 24px; color: var(--text-muted);
     font-size: 12px; border-top: 1px solid var(--border); position: relative; z-index: 1;
   }
 
@@ -180,23 +198,23 @@
     position: fixed; bottom: 98px; right: 28px;
     width: 400px; max-width: calc(100vw - 40px);
     height: 620px; max-height: calc(100vh - 140px);
-    background: #F2F3F7;
+    background: #131625;
     border-radius: 22px;
     z-index: 210;
     display: flex; flex-direction: column;
     opacity: 0; transform: translateY(16px) scale(.94);
     pointer-events: none;
     transition: opacity .3s, transform .3s cubic-bezier(.34,1.56,.64,1);
-    box-shadow: 0 20px 60px rgba(0,0,0,.12), 0 0 0 1px rgba(0,0,0,.04);
+    box-shadow: 0 24px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(99,102,241,.15);
     overflow: hidden;
   }
   .chat-panel.open { opacity: 1; transform: none; pointer-events: auto; }
 
   /* ── Chat header ─────────────────────── */
   .chat-header {
-    padding: 14px 18px; border-bottom: 1px solid rgba(0,0,0,.06);
+    padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,.07);
     display: flex; align-items: center; justify-content: space-between;
-    flex-shrink: 0; background: #F2F3F7;
+    flex-shrink: 0; background: #131625;
   }
   .chat-header-left { display: flex; align-items: center; gap: 10px; }
   .chat-avatar {
@@ -208,30 +226,31 @@
   .chat-header .status { font-size: 11px; color: var(--green); display: flex; align-items: center; gap: 4px; }
   .chat-header .status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
   .chat-close {
-    width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(0,0,0,.1);
+    width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,.12);
     background: none; color: var(--text-dim); cursor: pointer; font-size: 15px;
     display: flex; align-items: center; justify-content: center; transition: all .2s;
   }
-  .chat-close:hover { color: var(--text); border-color: rgba(0,0,0,.2); }
+  .chat-close:hover { color: var(--text); border-color: rgba(255,255,255,.25); }
 
   /* ── Service cards in panel ──────────── */
   .svc-cards {
     display: flex; gap: 8px; padding: 12px 16px 10px; flex-shrink: 0;
+    background: #131625; border-bottom: 1px solid rgba(255,255,255,.06);
   }
   .svc-card {
     flex: 1; padding: 12px 8px; border-radius: 12px;
-    background: var(--white); border: 1.5px solid transparent;
+    background: #1A1D30; border: 1.5px solid transparent;
     text-align: center; cursor: pointer; transition: all .2s;
-    box-shadow: 0 1px 4px rgba(0,0,0,.03); position: relative;
+    box-shadow: 0 1px 4px rgba(0,0,0,.3); position: relative;
   }
   .svc-card .svc-icon {
     width: 38px; height: 38px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 6px; font-size: 18px;
   }
-  .svc-card.leave   .svc-icon { background: #EEF1FE; }
-  .svc-card.reserve .svc-icon { background: #ECFDFD; }
-  .svc-card.repair  .svc-icon { background: #FEF2F2; }
+  .svc-card.leave   .svc-icon { background: rgba(99,102,241,.15); }
+  .svc-card.reserve .svc-icon { background: rgba(34,211,238,.1); }
+  .svc-card.repair  .svc-icon { background: rgba(248,113,113,.1); }
   .svc-card .svc-label { font-size: 12px; font-weight: 600; color: var(--text); }
   .svc-card .svc-desc  { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
 
@@ -248,10 +267,11 @@
   .chat-messages {
     flex: 1; overflow-y: auto; padding: 8px 16px 12px;
     display: flex; flex-direction: column; gap: 8px;
+    background: #0F1120;
   }
   .chat-messages::-webkit-scrollbar { width: 3px; }
   .chat-messages::-webkit-scrollbar-track { background: transparent; }
-  .chat-messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,.08); border-radius: 10px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 10px; }
 
   .msg { display: flex; gap: 8px; max-width: 92%; animation: msgIn .3s ease both; }
   @keyframes msgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -262,13 +282,13 @@
     width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center; font-size: 14px;
   }
-  .msg.agent .msg-avatar { background: #EEF1FE; }
-  .msg.user  .msg-avatar { background: #E0E7FF; }
+  .msg.agent .msg-avatar { background: rgba(99,102,241,.15); }
+  .msg.user  .msg-avatar { background: rgba(99,102,241,.2); }
 
   .msg-bubble {
     padding: 9px 13px; border-radius: 14px; font-size: 13px; line-height: 1.55;
   }
-  .msg.agent .msg-bubble { background: var(--white); border-bottom-left-radius: 4px; }
+  .msg.agent .msg-bubble { background: #1A1D30; border-bottom-left-radius: 4px; color: var(--text); }
   .msg.user  .msg-bubble { background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
   .msg-bubble .time { font-size: 10px; margin-top: 3px; opacity: .4; font-family: "JetBrains Mono", monospace; }
 
@@ -291,43 +311,51 @@
 
   /* ── Form card ───────────────────────── */
   .form-card {
-    background: #F8F9FC; border-radius: 10px; padding: 12px; margin-top: 6px;
-    border: 1px solid rgba(0,0,0,.06);
+    background: #0F1120; border-radius: 10px; padding: 12px; margin-top: 6px;
+    border: 1px solid rgba(255,255,255,.08);
   }
-  .form-card .fc-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+  .form-card .fc-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
   .form-card .fc-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 11px; }
   .form-card .fc-label { color: var(--text-muted); flex-shrink: 0; }
   .form-card .fc-value { color: var(--text); font-weight: 500; text-align: right; margin-left: 12px; }
+  .period-select {
+    padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,.12);
+    background: #1A1D30; font-size: 11px; font-family: inherit; color: var(--text);
+    cursor: pointer; outline: none; flex: 1; max-width: 180px;
+  }
+  .period-select:focus { border-color: var(--primary); }
+  .leave-period-row { align-items: center; }
   .form-card .fc-actions { display: flex; gap: 6px; margin-top: 10px; }
   .fc-actions button { flex: 1; padding: 7px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; font-family: inherit; }
   .fc-actions .btn-submit { background: var(--primary); border: none; color: #fff; }
   .fc-actions .btn-submit:hover { opacity: .9; }
   .fc-actions .btn-submit:disabled { opacity: .4; cursor: default; }
-  .fc-actions .btn-cancel { background: #E8E9EE; border: none; color: var(--text-secondary); }
+  .fc-actions .btn-cancel { background: #252840; border: none; color: var(--text-secondary); }
   .submitted-tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 50px; background: #ECFDF7; color: var(--green); margin-top: 6px; }
 
   /* ── Quick templates ─────────────────── */
-  .quick-tpl-wrap { padding: 4px 16px 8px; flex-shrink: 0; }
+  .quick-tpl-wrap { padding: 4px 16px 8px; flex-shrink: 0; background: #131625; }
   .quick-tpl-wrap .tpl-label { font-size: 10px; font-weight: 600; color: var(--text-muted); letter-spacing: .04em; margin-bottom: 5px; }
   .tpl-chips { display: flex; gap: 5px; flex-wrap: wrap; }
   .tpl-chip {
     font-size: 11px; padding: 5px 10px; border-radius: 50px;
-    background: var(--white); border: 1px solid rgba(0,0,0,.06);
+    background: #1A1D30; border: 1px solid rgba(255,255,255,.08);
     color: var(--text-secondary); cursor: pointer; transition: all .2s;
-    font-family: inherit; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,.02);
+    font-family: inherit; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,.2);
   }
-  .tpl-chip:hover { border-color: var(--primary); color: var(--primary); background: #F8F9FF; }
+  .tpl-chip:hover { border-color: var(--primary); color: var(--accent); background: rgba(99,102,241,.1); }
 
   /* ── Input ───────────────────────────── */
   .chat-input-area {
     padding: 8px 14px 14px; flex-shrink: 0;
     display: flex; gap: 8px; align-items: flex-end;
+    background: #131625; border-top: 1px solid rgba(255,255,255,.06);
   }
   .chat-input-wrap {
-    flex: 1; background: var(--white); border-radius: 20px;
+    flex: 1; background: #1A1D30; border-radius: 20px;
     padding: 7px 14px; display: flex; align-items: flex-end; gap: 6px;
-    border: 1px solid rgba(0,0,0,.06); transition: border-color .2s;
-    box-shadow: 0 1px 4px rgba(0,0,0,.02);
+    border: 1px solid rgba(255,255,255,.08); transition: border-color .2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
   }
   .chat-input-wrap:focus-within { border-color: var(--primary); }
   .chat-input-wrap textarea {
@@ -338,7 +366,7 @@
   .chat-input-wrap textarea::placeholder { color: var(--text-muted); }
   .chat-input-wrap .mic-btn {
     width: 28px; height: 28px; border-radius: 50%;
-    border: none; background: #F2F3F7; color: var(--text-secondary);
+    border: none; background: #252840; color: var(--text-secondary);
     cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; transition: all .2s;
   }
@@ -350,34 +378,117 @@
     background: var(--primary); border: none; color: #fff; font-size: 16px;
     cursor: pointer; flex-shrink: 0; transition: all .2s;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 3px 10px rgba(79,110,247,.3);
+    box-shadow: 0 3px 10px rgba(99,102,241,.4);
   }
   .send-btn:hover { transform: scale(1.05); }
   .send-btn:disabled { opacity: .3; transform: none; cursor: default; }
 
-  /* ── Floating button ─────────────────── */
+  /* ── Floating button (hidden, replaced by AI tip widget) ── */
   .float-btn {
     position: fixed; bottom: 28px; right: 28px;
     width: 58px; height: 58px; border-radius: 50%;
-    background: linear-gradient(135deg, #4F6EF7, #7B93FA);
+    background: linear-gradient(135deg, #6366F1, #818CF8);
     border: none; color: #fff; font-size: 24px; cursor: pointer;
-    z-index: 190; box-shadow: 0 8px 28px rgba(79,110,247,.4);
+    z-index: 190; box-shadow: 0 8px 28px rgba(99,102,241,.5);
     transition: all .3s; display: flex; align-items: center; justify-content: center;
     animation: floatPulse 2.8s ease infinite;
   }
   @keyframes floatPulse {
-    0%,100% { box-shadow: 0 8px 28px rgba(79,110,247,.4); }
-    50% { box-shadow: 0 8px 40px rgba(79,110,247,.6); }
+    0%,100% { box-shadow: 0 8px 28px rgba(99,102,241,.5); }
+    50% { box-shadow: 0 8px 40px rgba(99,102,241,.75); }
   }
   .float-btn:hover { transform: scale(1.08); }
   .float-btn.hidden { opacity: 0; transform: scale(.6); pointer-events: none; }
+
+  /* ── AI Tip Widget ───────────────────── */
+  .ai-tip-widget {
+    position: fixed; bottom: 28px; right: 28px;
+    z-index: 190; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+  }
+  .ai-tip-bubble {
+    background: #181B2E;
+    border: 1px solid rgba(99,102,241,.35);
+    border-radius: 18px 18px 4px 18px;
+    padding: 0;
+    width: 300px;
+    box-shadow: 0 16px 48px rgba(0,0,0,.5), 0 0 0 1px rgba(99,102,241,.1);
+    overflow: hidden;
+    transition: all .4s cubic-bezier(.34,1.56,.64,1);
+    transform-origin: bottom right;
+  }
+  .ai-tip-bubble.collapsed { transform: scale(0); opacity: 0; pointer-events: none; }
+
+  .ai-tip-header {
+    padding: 12px 14px; display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    background: linear-gradient(135deg, rgba(99,102,241,.15), rgba(34,211,238,.06));
+  }
+  .ai-tip-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, #6366F1, #818CF8);
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+    box-shadow: 0 3px 12px rgba(99,102,241,.4);
+  }
+  .ai-tip-title { font-size: 13px; font-weight: 700; color: var(--text); }
+  .ai-tip-status { font-size: 10px; color: var(--green); display: flex; align-items: center; gap: 3px; }
+  .ai-tip-status::before { content:""; width:5px; height:5px; border-radius:50%; background:var(--green); }
+  .ai-tip-close {
+    margin-left: auto; background: none; border: none; color: var(--text-muted);
+    cursor: pointer; font-size: 14px; padding: 2px 4px; border-radius: 4px; transition: color .2s;
+  }
+  .ai-tip-close:hover { color: var(--text); }
+
+  .ai-tip-body { padding: 12px 14px; }
+  .ai-tip-greeting {
+    font-size: 13px; color: var(--text); margin-bottom: 10px; line-height: 1.5;
+  }
+  .ai-tip-greeting strong { color: var(--accent); }
+  .ai-tip-hints { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+  .ai-tip-hint {
+    font-size: 11px; color: var(--text-secondary); padding: 5px 10px;
+    background: rgba(255,255,255,.04); border-radius: 8px; border: 1px solid rgba(255,255,255,.06);
+    cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 6px;
+  }
+  .ai-tip-hint:hover { background: rgba(99,102,241,.12); border-color: rgba(99,102,241,.3); color: var(--accent); }
+  .ai-tip-hint .hint-icon { font-size: 13px; }
+
+  .ai-tip-search {
+    display: flex; gap: 6px; align-items: center;
+    background: #0F1120; border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px; padding: 6px 10px;
+    transition: border-color .2s;
+  }
+  .ai-tip-search:focus-within { border-color: var(--primary); }
+  .ai-tip-search input {
+    flex: 1; background: none; border: none; outline: none;
+    font-size: 12px; color: var(--text); font-family: inherit;
+  }
+  .ai-tip-search input::placeholder { color: var(--text-muted); }
+  .ai-tip-search button {
+    background: var(--primary); border: none; border-radius: 6px;
+    color: #fff; font-size: 11px; padding: 3px 8px; cursor: pointer;
+    font-family: inherit; transition: opacity .2s;
+  }
+  .ai-tip-search button:hover { opacity: .85; }
+
+  .ai-tip-fab {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(135deg, #6366F1, #818CF8);
+    border: none; color: #fff; font-size: 22px; cursor: pointer;
+    box-shadow: 0 8px 28px rgba(99,102,241,.55);
+    display: flex; align-items: center; justify-content: center;
+    transition: all .3s; animation: floatPulse 2.8s ease infinite;
+    flex-shrink: 0;
+  }
+  .ai-tip-fab:hover { transform: scale(1.08); }
+  .ai-tip-fab.hidden { display: none; }
 
   /* ── Toast ───────────────────────────── */
   .toast {
     position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
     padding: 10px 22px; border-radius: 50px;
-    background: #1A1A2E; color: #fff; font-size: 13px; font-weight: 600;
-    z-index: 300; pointer-events: none;
+    background: #1A1D30; color: #fff; font-size: 13px; font-weight: 600;
+    z-index: 300; pointer-events: none; border: 1px solid rgba(99,102,241,.3);
     animation: toastIn .3s ease, toastOut .3s ease 1.6s forwards;
   }
   @keyframes toastIn  { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
@@ -389,7 +500,7 @@
 <div class="main-content">
   <!-- Hero -->
   <header class="hero">
-    <div class="logo-text">智慧校园 · AI原生</div>
+    <div class="logo-text">智慧校园</div>
     <p class="subtitle">基于金蝶AI苍穹平台的新质校园智能体 — 一句话即可完成请假、预约、报修</p>
     <div class="pill-row">
       <span class="pill">语音交互</span>
@@ -407,29 +518,32 @@
         <p>两大业务板块 + 一个AI交互中枢，覆盖校园全场景</p>
       </div>
       <div class="features">
-        <div class="feature-card">
+        <div class="feature-card" onclick="openChatWithService('leave')" style="cursor:pointer">
           <div class="fc-icon indigo">📋</div>
           <h3>智能请假系统</h3>
           <p>AI自动解析请假要素，告别繁琐的下拉框选择</p>
           <div class="tags">
-            <span class="tag">请假人</span><span class="tag">起止时间</span><span class="tag">星期推算</span><span class="tag">事由</span><span class="tag">审批人</span>
+            <span class="tag">请假人</span><span class="tag">起止时间</span><span class="tag">请假时长</span><span class="tag">事由</span><span class="tag">审批人</span>
           </div>
+          <div class="open-chat-hint">→ 点击立即开始请假</div>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openChatWithService('reservation')" style="cursor:pointer">
           <div class="fc-icon cyan">🏢</div>
           <h3>空间 / 资源预约</h3>
           <p>一键预约会议室、教室、报告厅、体育馆等场地资源</p>
           <div class="tags">
             <span class="tag">借用</span><span class="tag">申请</span><span class="tag">预定</span><span class="tag">场地</span><span class="tag">时段</span><span class="tag">事由</span>
           </div>
+          <div class="open-chat-hint">→ 点击立即预约场地</div>
         </div>
-        <div class="feature-card">
+        <div class="feature-card" onclick="openChatWithService('maintenance')" style="cursor:pointer">
           <div class="fc-icon green">🔧</div>
           <h3>一句话智能报修</h3>
           <p>后勤保障一键触达，AI识别设备类型与紧急程度</p>
           <div class="tags">
             <span class="tag">漏水</span><span class="tag">故障</span><span class="tag">断电</span><span class="tag">空调</span><span class="tag">门锁</span><span class="tag">插座</span>
           </div>
+          <div class="open-chat-hint">→ 点击立即报修</div>
         </div>
       </div>
     </div>
@@ -461,7 +575,7 @@
         <p>以下是三个典型场景的解析示例，试试点击右下角悬浮球与Agent对话</p>
       </div>
       <div class="scenarios">
-        <div class="scenario-card">
+        <div class="scenario-card" onclick="openChatWithScenario('leave',`我这周五下午发烧了，想请假去医院，一直请到下周一早上8点`)" style="cursor:pointer">
           <h3><span class="dot" style="background:var(--accent)"></span>场景一：智能请假</h3>
           <div class="input-bubble">"我这周五下午发烧了，想请假去医院，一直请到下周一早上8点"</div>
           <table>
@@ -469,25 +583,27 @@
             <tbody>
               <tr><td style="color:var(--text-dim)">起始时间</td><td>本周五 14:00</td></tr>
               <tr><td style="color:var(--text-dim)">结束时间</td><td>下周一 08:00</td></tr>
-              <tr><td style="color:var(--text-dim)">请假事由</td><td>发烧，去医院就诊</td></tr>
+
               <tr><td style="color:var(--text-dim)">请假类型</td><td><span class="highlight">病假</span>（AI推理）</td></tr>
             </tbody>
           </table>
+          <div class="open-chat-badge">✨ 点击体验请假场景</div>
         </div>
-        <div class="scenario-card">
+        <div class="scenario-card" onclick="openChatWithScenario('reservation',`我要申请借用教学楼7A505教室，明天下午五六节，用来开班会`)" style="cursor:pointer">
           <h3><span class="dot" style="background:var(--cyan)"></span>场景二：空间预约</h3>
-          <div class="input-bubble">"我要申请借用第一教学楼的302报告厅，明天下午两点到四点，用来开年级大会"</div>
+          <div class="input-bubble">"我要申请借用教学楼7A505教室，明天下午五六节，用来开班会"</div>
           <table>
             <thead><tr><th>表单字段</th><th>提取内容</th></tr></thead>
             <tbody>
-              <tr><td style="color:var(--text-dim)">场地类型</td><td>报告厅</td></tr>
-              <tr><td style="color:var(--text-dim)">具体位置</td><td>第一教学楼 302</td></tr>
-              <tr><td style="color:var(--text-dim)">使用时间</td><td>明天 14:00 - 16:00</td></tr>
-              <tr><td style="color:var(--text-dim)">使用事由</td><td>开年级大会</td></tr>
+              <tr><td style="color:var(--text-dim)">场地类型</td><td>教室</td></tr>
+              <tr><td style="color:var(--text-dim)">具体位置</td><td>教学楼 7A505</td></tr>
+              <tr><td style="color:var(--text-dim)">预约节次</td><td>第5-6节 (14:30-16:10)</td></tr>
+              <tr><td style="color:var(--text-dim)">使用事由</td><td>开班会</td></tr>
             </tbody>
           </table>
+          <div class="open-chat-badge">✨ 点击体验预约场景</div>
         </div>
-        <div class="scenario-card">
+        <div class="scenario-card" onclick="openChatWithScenario('maintenance',`男生宿舍4栋502的空调坏了，一直漏水，插座也短路断电了，赶紧找人来修`)" style="cursor:pointer">
           <h3><span class="dot" style="background:var(--red)"></span>场景三：故障报修</h3>
           <div class="input-bubble">"男生宿舍4栋502的空调坏了，一直漏水，插座也短路断电了，赶紧找人来修"</div>
           <table>
@@ -498,13 +614,14 @@
               <tr><td style="color:var(--text-dim)">紧急程度</td><td><span class="highlight-red">紧急</span></td></tr>
             </tbody>
           </table>
+          <div class="open-chat-badge">✨ 点击体验报修场景</div>
         </div>
       </div>
     </div>
   </section>
 
   <footer>
-    智慧校园 · AI原生 | 基于金蝶AI苍穹平台 | 点击右下角悬浮球开始对话体验
+    智慧校园 · AI原生 | 基于金蝶AI苍穹平台 | 点击右下角 AI 助手或卡片开始对话体验
   </footer>
 </div>
 
@@ -557,16 +674,6 @@
     </div>
   </div>
 
-  <!-- Quick templates -->
-  <div class="quick-tpl-wrap" id="quickTplWrap">
-    <div class="tpl-label">⚡ 快捷模板</div>
-    <div class="tpl-chips" id="tplChips">
-      <button class="tpl-chip" data-text="我这周五下午发烧了，想请假去医院，一直请到下周一早上8点">🤒 周五下午发烧请假去医院</button>
-      <button class="tpl-chip" data-text="我明天家里有急事，需要请一天事假">🏠 明天家里急事请事假</button>
-      <button class="tpl-chip" data-text="我今天感冒了很不舒服，想请一天病假">😷 感冒不舒服请病假</button>
-    </div>
-  </div>
-
   <!-- Input -->
   <div class="chat-input-area">
     <div class="chat-input-wrap">
@@ -577,8 +684,38 @@
   </div>
 </div>
 
-<!-- Floating button -->
-<button class="float-btn" id="floatBtn" title="打开校园智能助手">💬</button>
+<!-- AI Tip Widget -->
+<div class="ai-tip-widget" id="aiTipWidget">
+  <div class="ai-tip-bubble" id="aiTipBubble">
+    <div class="ai-tip-header">
+      <div class="ai-tip-avatar">🎓</div>
+      <div>
+        <div class="ai-tip-title">校园智能助手</div>
+        <div class="ai-tip-status">在线 · AI 驱动</div>
+      </div>
+      <button class="ai-tip-close" id="aiTipClose" title="关闭">✕</button>
+    </div>
+    <div class="ai-tip-body">
+      <div class="ai-tip-greeting">
+        <strong>请问有什么可以帮您？</strong><br>
+        <span style="font-size:12px;color:var(--text-dim)">点击下方功能卡片或直接输入您的需求，AI将为您自动填写表单。</span>
+      </div>
+      <div class="ai-tip-hints">
+        <div class="ai-tip-hint" onclick="openChatWithService('leave')"><span class="hint-icon">📋</span>我想申请请假</div>
+        <div class="ai-tip-hint" onclick="openChatWithService('reservation')"><span class="hint-icon">📅</span>我需要预约场地</div>
+        <div class="ai-tip-hint" onclick="openChatWithService('maintenance')"><span class="hint-icon">🔧</span>我要报修故障设备</div>
+      </div>
+      <div class="ai-tip-search">
+        <input type="text" id="aiTipInput" placeholder="输入您的问题…" />
+        <button onclick="sendAiTipQuery()">发送</button>
+      </div>
+    </div>
+  </div>
+  <button class="ai-tip-fab hidden" id="aiTipFab" title="打开校园智能助手">🎓</button>
+</div>
+
+<!-- Hidden float-btn kept for script compatibility -->
+<button class="float-btn" id="floatBtn" style="display:none" title="打开校园智能助手">💬</button>
 
 <script>
 (function() {
@@ -590,61 +727,92 @@
   const chatInput    = document.getElementById('chatInput');
   const sendBtn      = document.getElementById('sendBtn');
   const micBtn       = document.getElementById('micBtn');
-  const tplChips     = document.getElementById('tplChips');
-
   let isOpen = false, isProcessing = false, isRecording = false, recognition = null;
   let currentService = 'leave';
-
-  // ── Templates per service ─────────────
-  const templates = {
-    leave: [
-      { label: '🤒 周五下午发烧请假去医院', text: '我这周五下午发烧了，想请假去医院，一直请到下周一早上8点' },
-      { label: '🏠 明天家里急事请事假',       text: '我明天家里有急事，需要请一天事假' },
-      { label: '😷 感冒不舒服请病假',        text: '我今天感冒了很不舒服，想请一天病假休息' },
-    ],
-    reservation: [
-      { label: '🏢 借用教学楼报告厅开会',     text: '我要申请借用第一教学楼302报告厅，明天下午两点到四点，用来开年级大会' },
-      { label: '🔬 预约实验室做实验',        text: '我想预约后天上午的化工实验室，做毕业设计实验，大概需要3小时' },
-      { label: '🏟️ 借用体育馆办比赛',        text: '我们班这周六下午想借用体育馆篮球场，举办班级篮球赛' },
-    ],
-    maintenance: [
-      { label: '💧 宿舍空调漏水插座短路',     text: '男生宿舍4栋502的空调坏了，一直漏水，插座也短路断电了，赶紧找人来修一下' },
-      { label: '💡 教室灯和投影坏了',        text: '第三教学楼208教室的灯不亮了，投影也打不开，明天要上课，麻烦尽快修' },
-      { label: '🚿 宿舍水管破裂漏水',        text: '女生宿舍2栋3楼公共卫生间的水管破了，一直在漏水，地面都湿了' },
-    ],
-  };
-
-  function updateTemplates(svc) {
-    const tmpls = templates[svc] || templates.leave;
-    tplChips.innerHTML = tmpls.map(t =>
-      `<button class="tpl-chip" data-text="${t.text}">${t.label}</button>`
-    ).join('');
-    tplChips.querySelectorAll('.tpl-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        chatInput.value = chip.dataset.text;
-        chatInput.style.height = 'auto';
-        chatInput.style.height = Math.min(chatInput.scrollHeight, 70) + 'px';
-        chatInput.focus();
-        scrollBottom();
-      });
-    });
-  }
 
   // ── Open / Close ──────────────────────
   function openChat() {
     isOpen = true;
     chatPanel.classList.add('open');
     chatBackdrop.classList.add('open');
-    floatBtn.classList.add('hidden');
+    // Hide AI tip bubble, show FAB
+    const bubble = document.getElementById('aiTipBubble');
+    const fab = document.getElementById('aiTipFab');
+    if (bubble) bubble.classList.add('collapsed');
+    if (fab) { fab.classList.remove('hidden'); }
     setTimeout(() => { chatInput.focus(); scrollBottom(); }, 350);
   }
   function closeChat() {
     isOpen = false;
     chatPanel.classList.remove('open');
     chatBackdrop.classList.remove('open');
-    floatBtn.classList.remove('hidden');
+    // Restore AI tip bubble
+    const bubble = document.getElementById('aiTipBubble');
+    const fab = document.getElementById('aiTipFab');
+    if (bubble) bubble.classList.remove('collapsed');
+    if (fab) fab.classList.add('hidden');
     if (isRecording) stopRecording();
   }
+
+  // ── openChatWithService (called from cards) ──
+  window.openChatWithService = function(svc) {
+    // Set service tab
+    document.getElementById('svcCards').querySelectorAll('.svc-card').forEach(c => {
+      c.classList.remove('active');
+      if (c.dataset.svc === svc) c.classList.add('active');
+    });
+    currentService = svc;
+    openChat();
+  };
+
+  // ── Scenario card click: fill text & auto send ──
+  window.openChatWithScenario = function(svc, text) {
+    openChatWithService(svc);
+    setTimeout(() => {
+      const input = document.getElementById('chatInput');
+      input.value = text;
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 70) + 'px';
+      document.getElementById('sendBtn').click();
+    }, 450);
+  };
+
+  // ── AI Tip Widget logic ────────────────
+  const aiTipClose = document.getElementById('aiTipClose');
+  const aiTipFab   = document.getElementById('aiTipFab');
+  if (aiTipClose) {
+    aiTipClose.addEventListener('click', () => {
+      const bubble = document.getElementById('aiTipBubble');
+      bubble.classList.add('collapsed');
+      aiTipFab.classList.remove('hidden');
+    });
+  }
+  if (aiTipFab) {
+    aiTipFab.addEventListener('click', () => {
+      const bubble = document.getElementById('aiTipBubble');
+      bubble.classList.remove('collapsed');
+      aiTipFab.classList.add('hidden');
+    });
+  }
+  window.sendAiTipQuery = function() {
+    const input = document.getElementById('aiTipInput');
+    const text = input ? input.value.trim() : '';
+    if (!text) return;
+    input.value = '';
+    openChat();
+    setTimeout(() => {
+      chatInput.value = text;
+      sendMessage();
+    }, 400);
+  };
+  // Allow Enter key in AI tip input
+  const aiTipInputEl = document.getElementById('aiTipInput');
+  if (aiTipInputEl) {
+    aiTipInputEl.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); window.sendAiTipQuery(); }
+    });
+  }
+
   floatBtn.addEventListener('click', openChat);
   chatClose.addEventListener('click', closeChat);
   chatBackdrop.addEventListener('click', closeChat);
@@ -655,10 +823,8 @@
       document.getElementById('svcCards').querySelectorAll('.svc-card').forEach(c => c.classList.remove('active'));
       card.classList.add('active');
       currentService = card.dataset.svc;
-      updateTemplates(currentService);
     });
   });
-  updateTemplates(currentService);
 
   function scrollBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
   function now() { const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
@@ -681,6 +847,7 @@
     const t=document.createElement('div'); t.className='toast'; t.textContent=text;
     document.body.appendChild(t); setTimeout(()=>t.remove(),2000);
   }
+  window.showToast = showToast;
 
   // ── Voice ─────────────────────────────
   function startRecording() {
@@ -701,9 +868,9 @@
 
   // ── NLP ───────────────────────────────
   const INTENTS = {
-    leave:       { name:'请假申请', icon:'📋', keywords:['请假','病假','事假','休假','不舒服','发烧','感冒','咳嗽','头疼','去医院','看病','休息','调休','年假','有事','家里','急事'] },
-    reservation: { name:'场地预约', icon:'📅', keywords:['借用','申请','预定','预约','会议室','场地','教室','报告厅','操场','体育馆','实验室','开会','年级大会','讨论','举办','活动','篮球赛'] },
-    maintenance: { name:'故障报修', icon:'🔧', keywords:['坏','修','漏水','灯不亮','故障','空调','投影','断电','门锁','水管','马桶','窗户','插座','短路','坏了','不好使','维修','报修','找人来修'] },
+    leave:       { name:'请假申请', icon:'📋', keywords:['请假','病假','事假','公假','休假','不舒服','发烧','感冒','咳嗽','头疼','去医院','看病','休息','调休','年假','有事','家里','急事','全天','半天','请公假','请事假','请病假','代表学校'] },
+    reservation: { name:'场地预约', icon:'📅', keywords:['借用','预定','预约','会议室','场地','教室','报告厅','操场','体育馆','实验室','开会','年级大会','讨论','举办活动','借用场地','申请借用','预约场地','借一下'] },
+    maintenance: { name:'故障报修', icon:'🔧', keywords:['坏了','漏水','灯不亮','故障','空调','投影','断电','门锁','水管','马桶','窗户','插座','短路','不好使','维修','报修','找人来修','灯管','灯泡'] },
   };
 
   function classifyIntent(text) {
@@ -712,88 +879,578 @@
     return bestScore>0 ? best : null;
   }
 
+  // 节次定义: 节次 -> {start, end}
+  const PERIODS = [
+    {n:1,  start:'8:30',  end:'9:15'},
+    {n:2,  start:'9:25',  end:'10:10'},
+    {n:3,  start:'10:20', end:'11:05'},
+    {n:4,  start:'11:15', end:'12:00'},
+    {n:5,  start:'14:30', end:'15:15'},
+    {n:6,  start:'15:25', end:'16:10'},
+    {n:7,  start:'16:20', end:'17:05'},
+    {n:8,  start:'17:15', end:'18:00'},
+    {n:9,  start:'19:30', end:'20:15'},
+    {n:10, start:'20:25', end:'21:10'},
+  ];
+
+  function periodOptions(selected) {
+    return PERIODS.map(p => `<option value="${p.n}" ${p.n===selected?'selected':''}>第${p.n}节 (${p.start}-${p.end})</option>`).join('');
+  }
+
+  function periodTime(pn) { const p=PERIODS.find(x=>x.n===pn); return p?p.start+' - '+p.end:'--'; }
+  function periodStartTime(pn) { const p=PERIODS.find(x=>x.n===pn); return p?p.start:'--'; }
+  function periodEndTime(pn) { const p=PERIODS.find(x=>x.n===pn); return p?p.end:'--'; }
+
+  function calcPeriodDuration(sp, ep) {
+    const count = ep - sp + 1;
+    if (count <= 0) return '时间有误';
+    const totalMin = count * 45;
+    if (totalMin < 60) return totalMin + ' 分钟';
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    return m > 0 ? h + ' 小时 ' + m + ' 分钟' : h + ' 小时';
+  }
+
+  // 日期范围 + 时段映射
+  const DAY_PART = {
+    '上午': { sp: 1, ep: 4, label: '上午' },
+    '下午': { sp: 5, ep: 8, label: '下午' },
+    '晚上': { sp: 9, ep: 10, label: '晚上' },
+    '全天': { sp: 1, ep: 10, label: '全天' },
+  };
+
+  function normalizeDate(dateStr) {
+    // 输入格式: "2026/5/30" 或 "2026/6/31"，自动修正无效日期
+    const parts = dateStr.split(/[\/\-]/);
+    if (parts.length !== 3) return dateStr;
+    let y = parseInt(parts[0]), m = parseInt(parts[1]), d = parseInt(parts[2]);
+    if (isNaN(y) || isNaN(m) || isNaN(d)) return dateStr;
+    const daysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    // 闰年2月有29天
+    if (m === 2 && ((y % 4 === 0 && y % 100 !== 0) || y % 400 === 0)) daysInMonth[2] = 29;
+    const maxDay = daysInMonth[m] || 31;
+    if (d > maxDay) d = maxDay;
+    return y + '/' + m + '/' + d;
+  }
+
+  function parseDateRange(text) {
+    // 统一时段表述：早上/早晨→上午, 中午→下午
+    const t = text.replace(/早上|早晨|早间/g, '上午').replace(/中午|午间/g, '下午');
+
+    // ① 绝对日期: 2026/5/30上午 到 2026/6/1下午
+    const m1 = t.match(/(\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2})\s*(上午|下午|晚上|全天)?\s*[到至\-~]+\s*(\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2})\s*(上午|下午|晚上|全天)?/);
+    if (m1) {
+      return { startDate: normalizeDate(m1[1]), startPart: m1[2] || '上午', endDate: normalizeDate(m1[3]), endPart: m1[4] || '下午' };
+    }
+
+    // ② 中文月日: 5月30日上午到6月1日下午
+    const m2 = t.match(/(\d{1,2}[月\.]\d{1,2}[日号]?)\s*(上午|下午|晚上|全天)?\s*[到至\-~]+\s*(\d{1,2}[月\.]\d{1,2}[日号]?)\s*(上午|下午|晚上|全天)?/);
+    if (m2) {
+      const y = new Date().getFullYear();
+      const fmt = s => normalizeDate(y + '/' + s.replace(/[月日号]/g, '/').replace(/\./g, '/').replace(/\/$/, ''));
+      return { startDate: fmt(m2[1]), startPart: m2[2] || '上午', endDate: fmt(m2[3]), endPart: m2[4] || '下午' };
+    }
+
+    // ③ 相对日期范围: 这周五下午...一直请到下周一早上
+    const relRe = /(今天|明天|后天|这周[一二三四五六日天]|下周[一二三四五六日天])\s*(上午|下午|晚上|全天)?.*?[到至].*?(今天|明天|后天|这周[一二三四五六日天]|下周[一二三四五六日天])\s*(上午|下午|晚上|全天)?/;
+    const m3 = t.match(relRe);
+    if (m3) {
+      const fmt = (s, part) => {
+        const d = parseRelativeDateStr(s);
+        const y = d.getFullYear(), m = d.getMonth() + 1, day = d.getDate();
+        return { date: y + '/' + m + '/' + day, part: part || '上午' };
+      };
+      const start = fmt(m3[1], m3[2]);
+      const end = fmt(m3[3], m3[4]);
+      if (start.date !== end.date || start.part !== end.part) {
+        return { startDate: normalizeDate(start.date), startPart: start.part, endDate: normalizeDate(end.date), endPart: end.part };
+      }
+    }
+
+    return null;
+  }
+
+  function formatDateRange(dr) {
+    return dr.startDate + ' ' + dr.startPart + '  →  ' + dr.endDate + ' ' + dr.endPart;
+  }
+
+  function calcMultiDayDuration(dr, sp, ep) {
+    const sd = new Date(dr.startDate), ed = new Date(dr.endDate);
+    if (isNaN(sd.getTime()) || isNaN(ed.getTime())) return calcPeriodDuration(sp, ep);
+    const diffDays = Math.round((ed - sd) / 86400000);
+    if (diffDays < 0) return '日期有误';
+    if (diffDays === 0) return calcPeriodDuration(sp, ep);
+    const totalPeriods = (10 - sp + 1) + (diffDays - 1) * 10 + ep;
+    const totalMin = totalPeriods * 45;
+    const days = Math.floor(totalMin / 450);
+    const hours = Math.round((totalMin % 450) / 60);
+    let r = '';
+    if (days > 0) r += days + ' 天 ';
+    if (hours > 0) r += hours + ' 小时';
+    return r || totalMin + ' 分钟';
+  }
+
+  function toDateInputValue(dateStr) {
+    // 支持: '2026/5/30', '2026-5-30', '今天', '明天', '后天', '本周X', '下周X'
+    if (/^\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}$/.test(dateStr)) {
+      const parts = dateStr.split(/[\/\-]/);
+      return parts[0] + '-' + parts[1].padStart(2, '0') + '-' + parts[2].padStart(2, '0');
+    }
+    const d = parseRelativeDateStr(dateStr);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function dayPartFromPeriod(p) {
+    if (p >= 1 && p <= 4) return '上午';
+    if (p >= 5 && p <= 8) return '下午';
+    return '晚上';
+  }
+
+  function periodFromDayPart(dp) {
+    return DAY_PART[dp] || DAY_PART['上午'];
+  }
+
+  function calcLeaveDuration(startDateVal, startPart, endDateVal, endPart) {
+    const sp = periodFromDayPart(startPart).sp;
+    const ep = periodFromDayPart(endPart).ep;
+    const sd = new Date(startDateVal), ed = new Date(endDateVal);
+    if (isNaN(sd.getTime()) || isNaN(ed.getTime())) return calcPeriodDuration(sp, ep);
+    const diffDays = Math.round((ed - sd) / 86400000);
+    if (diffDays < 0) return '日期有误';
+    if (diffDays === 0) return calcPeriodDuration(sp, ep);
+    const totalPeriods = (10 - sp + 1) + (diffDays - 1) * 10 + ep;
+    const totalMin = totalPeriods * 45;
+    const days = Math.floor(totalMin / 450);
+    const hours = Math.round((totalMin % 450) / 60);
+    let r = '';
+    if (days > 0) r += days + ' 天 ';
+    if (hours > 0) r += hours + ' 小时';
+    return r || totalMin + ' 分钟';
+  }
+
+  function parseRelativeDateStr(dateStr) {
+    const now = new Date();
+    let base = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if (dateStr === '明天') base.setDate(base.getDate() + 1);
+    else if (dateStr === '后天') base.setDate(base.getDate() + 2);
+    else if (dateStr.startsWith('下周')) {
+      const wm = {一:1,二:2,三:3,四:4,五:5,六:6,日:0,天:0};
+      const w = wm[dateStr.charAt(2)] !== undefined ? wm[dateStr.charAt(2)] : 1;
+      const todayW = now.getDay();
+      base.setDate(base.getDate() + (7 - todayW + w));
+    } else if (dateStr.startsWith('本周') || dateStr.startsWith('这周')) {
+      const wm = {一:1,二:2,三:3,四:4,五:5,六:6,日:0,天:0};
+      const ch = dateStr.charAt(2);
+      const w = wm[ch] !== undefined ? wm[ch] : 1;
+      const todayW = now.getDay();
+      base.setDate(base.getDate() + (w - todayW));
+    }
+    return base;
+  }
+
+  // 中文数字映射
+  const CN_NUM = {'一':1,'二':2,'两':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10,'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10};
+
+  function parsePeriodsFromText(text) {
+    // 1) 连续两个中文数字+节: "一二节", "三四节", "五六节"等
+    const doubleCn = text.match(/([一二三四五六七八九十])([一二三四五六七八九十])节/);
+    if (doubleCn && CN_NUM[doubleCn[1]] && CN_NUM[doubleCn[2]]) {
+      return { sp: CN_NUM[doubleCn[1]], ep: CN_NUM[doubleCn[2]] };
+    }
+    // 2) "第X节到第Y节" / "第X到Y节" / "X到Y节"
+    const range = text.match(/第?\s*(\d+|[一二三四五六七八九十])\s*节?\s*[到至\-~]\s*第?\s*(\d+|[一二三四五六七八九十])\s*节/);
+    if (range && CN_NUM[range[1]] && CN_NUM[range[2]]) {
+      return { sp: CN_NUM[range[1]], ep: CN_NUM[range[2]] };
+    }
+    // 3) "第X节" 单独
+    const single = text.match(/第\s*(\d+|[一二三四五六七八九十])\s*节/);
+    if (single && CN_NUM[single[1]]) {
+      return { sp: CN_NUM[single[1]], ep: CN_NUM[single[1]] };
+    }
+    // 4) 上午/下午/晚上 + 前两节/后两节
+    if (/前两节|前2节/.test(text)) {
+      if (/早上|上午/.test(text)) return { sp: 1, ep: 2 };
+      if (/下午/.test(text)) return { sp: 5, ep: 6 };
+      if (/晚上/.test(text)) return { sp: 9, ep: 10 };
+    }
+    if (/后两节|后2节/.test(text)) {
+      if (/早上|上午/.test(text)) return { sp: 3, ep: 4 };
+      if (/下午/.test(text)) return { sp: 7, ep: 8 };
+    }
+    return null;
+  }
+
   function extractLeaveEntities(text) {
-    const e={}; e['请假人']='当前用户';
-    if(/发烧|感冒|咳嗽|头疼|肚子疼|牙疼|不舒服|生病|难受|发炎/.test(text)) e['请假类型']='病假';
-    else if(/事假|有事|家里|急事/.test(text)) e['请假类型']='事假';
-    else if(/年假|调休|休假/.test(text)) e['请假类型']='年假/调休'; else e['请假类型']='事假';
-    let sd='今天',st='08:00';
-    if(/明天/.test(text)) sd='明天'; else if(/后天/.test(text)) sd='后天';
-    else if(/这周([一二三四五六日天])/.test(text)) sd='本周'+(text.match(/这周([一二三四五六日天])/)||[])[1];
-    else if(/下周([一二三四五六日天])/.test(text)) sd='下周'+(text.match(/下周([一二三四五六日天])/)||[])[1];
-    const tm=text.match(/(早上|上午|中午|下午|晚上|傍晚|凌晨)?\s*(\d{1,2})点/);
-    if(tm){ let h=parseInt(tm[2]),p=tm[1]||''; if(p.includes('下午')||p.includes('晚上')) h+=12; else if(p.includes('中午')&&h<2) h+=12; st=String(h).padStart(2,'0')+':00'; }
-    else if(/下午/.test(text)&&!tm) st='14:00';
-    e['起始时间']=sd+' '+st;
-    let ed=sd,et='18:00';
-    if(/下周一/.test(text)) ed='下周一';
-    const em=text.match(/(?:到|一直到|请到)\s*(?:下周一|下周.|明天|后天)?\s*(早上|上午|中午|下午|晚上)?\s*(\d{1,2})点/);
-    if(em){ let h=parseInt(em[2]),p=em[1]||''; if(p.includes('下午')||p.includes('晚上')) h+=12; et=String(h).padStart(2,'0')+':00'; }
-    else if(/下周一早上/.test(text)&&/8点/.test(text)){ ed='下周一'; et='08:00'; }
-    else if(/一天/.test(text)) et='18:00';
-    e['结束时间']=ed+' '+et;
-    const rp=[]; if(/发烧/.test(text)) rp.push('发烧'); if(/感冒/.test(text)) rp.push('感冒'); if(/咳嗽/.test(text)) rp.push('咳嗽'); if(/头疼/.test(text)) rp.push('头疼'); if(/去医院/.test(text)) rp.push('去医院就诊'); if(rp.length===0) rp.push(/不舒服/.test(text)?'身体不适':'个人事务');
-    e['请假事由']=rp.join('，');
-    const wm={一:'一',二:'二',三:'三',四:'四',五:'五',六:'六',日:'日',天:'日'};
-    const sw=text.match(/周([一二三四五六日天])/); e['起始星期']=sw?'星期'+wm[sw[1]]:'（自动推算）';
-    const ew=text.match(/下周([一二三四五六日天])/); e['结束星期']=ew?'星期'+wm[ew[1]]:'（自动推算）';
-    e['请假时长']='（自动计算）'; e['审批人']='班主任 / 辅导员';
+    const e = {}; e['请假人'] = '当前用户';
+    // 统一时段表述
+    const t = text.replace(/早上|早晨|早间/g, '上午').replace(/中午|午间/g, '下午');
+
+    // ── 请假类型 ──
+    if(/发烧|感冒|咳嗽|头疼|肚子疼|牙疼|不舒服|生病|难受|发炎|看病|去医院/.test(t)) e['请假类型']='病假';
+    else if(/公假|公差|公务|学校安排|代表学校|比赛|参赛|活动|志愿者|值勤|升旗/.test(t)) e['请假类型']='公假';
+    else if(/事假|有事|家里|急事|私事|个人/.test(t)) e['请假类型']='事假';
+    else e['请假类型']='事假';
+
+    // ── 日期 ──
+    let dateStr = '今天';
+    if(/明天/.test(t)) dateStr='明天'; else if(/后天/.test(t)) dateStr='后天';
+    else if(/这周([一二三四五六日天])/.test(t)) dateStr='本周'+(t.match(/这周([一二三四五六日天])/)||[])[1];
+    else if(/下周([一二三四五六日天])/.test(t)) dateStr='下周'+(t.match(/下周([一二三四五六日天])/)||[])[1];
+    e['请假日期'] = dateStr;
+
+    // ── 节次解析 ──
+    const parsed = parsePeriodsFromText(t);
+    let sp, ep;
+    if (parsed) {
+      sp = parsed.sp; ep = parsed.ep;
+    } else {
+      sp = 1; ep = 10;
+      const hasMorning = /上午/.test(t);
+      const hasAfternoon = /下午/.test(t);
+      const hasNight = /晚上/.test(t);
+      if (hasMorning && !hasAfternoon && !hasNight) { sp = 1; ep = 4; }
+      else if (!hasMorning && hasAfternoon && !hasNight) { sp = 5; ep = 8; }
+      else if (!hasMorning && !hasAfternoon && hasNight) { sp = 9; ep = 10; }
+      else if (hasMorning && hasAfternoon && !hasNight) { sp = 1; ep = 8; }
+    }
+
+    // ── 日期范围解析 (覆盖单日期) ──
+    const dateRange = parseDateRange(text);
+    if (dateRange) {
+      e['起始日期'] = toDateInputValue(dateRange.startDate);
+      e['起始时段'] = dateRange.startPart || '上午';
+      e['结束日期'] = toDateInputValue(dateRange.endDate);
+      e['结束时段'] = dateRange.endPart || '下午';
+      // 跨天请假：自动使用1-10节（全天）
+      if (dateRange.startDate !== dateRange.endDate) {
+        sp = 1; ep = 10;
+      } else {
+        sp = (DAY_PART[dateRange.startPart] || DAY_PART['上午']).sp;
+        ep = (DAY_PART[dateRange.endPart] || DAY_PART['下午']).ep;
+      }
+    } else {
+      const dv = toDateInputValue(dateStr);
+      e['起始日期'] = dv;
+      e['起始时段'] = dayPartFromPeriod(sp);
+      e['结束日期'] = dv;
+      e['结束时段'] = dayPartFromPeriod(ep);
+    }
+
+    e['起始节次'] = sp;
+    e['结束节次'] = ep;
+    e['起始时间'] = periodStartTime(sp);
+    e['结束时间'] = periodEndTime(ep);
+    e['请假节次'] = `第${sp}-${ep}节`;
+    e['请假时长'] = dateRange ? calcMultiDayDuration(dateRange, sp, ep) : calcPeriodDuration(sp, ep);
+    e['审批人'] = '辅导员';
     return e;
   }
 
   function extractReservationEntities(text) {
     const e={}; e['预约人']='当前用户';
-    if(/报告厅/.test(text)) e['场地类型']='报告厅'; else if(/会议室/.test(text)) e['场地类型']='会议室'; else if(/教室/.test(text)) e['场地类型']='教室'; else if(/操场/.test(text)) e['场地类型']='操场'; else if(/体育馆/.test(text)) e['场地类型']='体育馆'; else if(/实验室/.test(text)) e['场地类型']='实验室'; else e['场地类型']='场地';
-    const bm=text.match(/(第[一二三四五六七八九十]+|[A-Za-z]+)\s*(教学|实验|办公|综合)?(楼|中心|区)/);
-    const rm=text.match(/(\d{2,4})\s*(室|房间|厅|报告厅|教室|会议室)/);
-    let loc=''; if(bm) loc+=bm[0]; if(rm) loc+=(loc?' ':'')+rm[1]+(rm[2]||'');
-    if(!loc){ const am=text.match(/([^\s，。,]+(?:楼|栋|区|馆))\s*(\d+)?/); if(am) loc=am[0]; }
+
+    // ── 场地类型 ──
+    if(/报告厅/.test(text)) e['场地类型']='报告厅'; else if(/会议室/.test(text)) e['场地类型']='会议室';
+    else if(/教室/.test(text)) e['场地类型']='教室'; else if(/操场/.test(text)) e['场地类型']='操场';
+    else if(/体育馆/.test(text)) e['场地类型']='体育馆'; else if(/实验室/.test(text)) e['场地类型']='实验室';
+    else e['场地类型']='场地';
+
+    // ── 位置解析 (支持: 7A505 / 3A103 / 第一教学楼7A505 等) ──
+    let loc='';
+    // 核心房间号格式: 3-7 + A/B/C + 2-3位数字 (如 7A505, 3A103)
+    const roomCode = text.match(/([3-7][ABC]\d{2,3})/);
+    if (roomCode) {
+      const code = roomCode[1];
+      // 尝试匹配前面的楼栋名
+      const before = text.substring(0, text.indexOf(code)).trim();
+      const bldMatch = before.match(/([^\s，。,，]{1,6}(?:楼|中心|区|馆|栋|教室|厅))/);
+      if (bldMatch) {
+        let bld = bldMatch[1].replace(/^.*?(?:申请借用|借用|申请|预约|预定|我想|我要|我们)/g, '');
+        loc = bld + ' ' + code;
+      } else {
+        loc = code;
+      }
+    }
+    if (!loc) {
+      // 补充: 体育馆/篮球场/操场
+      const venue = text.match(/([^\s，。,，]{2,6}(?:馆|场|操场|厅|中心))/);
+      if (venue) loc = venue[1].replace(/^.*?(?:申请借用|借用|申请|预约|预定|我想|我要|我们)/g, '');
+    }
     e['具体位置']=loc||'待确认';
-    let ud='今天',us='09:00',ue='11:00';
-    if(/明天/.test(text)) ud='明天'; else if(/后天/.test(text)) ud='后天';
-    const tr=text.match(/(\d{1,2})点[到至\-~]+\s*(\d{1,2})点/);
-    if(tr){ us=String(parseInt(tr[1])).padStart(2,'0')+':00'; ue=String(parseInt(tr[2])).padStart(2,'0')+':00'; }
-    if(/下午/.test(text)){ if(!tr){us='14:00';ue='16:00';} else{ let s=parseInt(tr[1]),e2=parseInt(tr[2]); if(s<8)s+=12; if(e2<8)e2+=12; us=String(s).padStart(2,'0')+':00'; ue=String(e2).padStart(2,'0')+':00'; } }
-    e['使用时间']=ud+' '+us+' - '+ue;
-    const pm=text.match(/(?:用来|为了|开|举办|组织|进行|做)\s*(.{2,15}?)(?:，|。|$|的)/);
-    e['使用事由']=pm?pm[1]:'待确认'; e['参与人数']='待确认';
+
+    // ── 日期 ──
+    let dateStr = '今天';
+    if(/明天/.test(text)) dateStr='明天'; else if(/后天/.test(text)) dateStr='后天';
+    else if(/这周([一二三四五六日天])/.test(text)) dateStr='本周'+(text.match(/这周([一二三四五六日天])/)||[])[1];
+    e['预约日期'] = dateStr;
+
+    // ── 节次解析 (复用请假逻辑) ──
+    const parsed = parsePeriodsFromText(text);
+    let sp, ep;
+    if (parsed) { sp = parsed.sp; ep = parsed.ep; }
+    else {
+      const hasM=/早上|上午/.test(text), hasA=/下午/.test(text), hasN=/晚上/.test(text);
+      if(hasM&&!hasA&&!hasN){sp=1;ep=4;} else if(!hasM&&hasA&&!hasN){sp=5;ep=8;}
+      else if(!hasM&&!hasA&&hasN){sp=9;ep=10;} else if(hasM&&hasA&&!hasN){sp=1;ep=8;}
+      else {sp=1;ep=10;}
+    }
+    e['起始节次'] = sp;
+    e['结束节次'] = ep;
+    e['起始时间'] = periodStartTime(sp);
+    e['结束时间'] = periodEndTime(ep);
+    e['预约节次'] = `第${sp}-${ep}节`;
+    e['预约时长'] = calcPeriodDuration(sp, ep);
+
+    // ── 事由 ──
+    const pm=text.match(/(?:用来|为了|开|举办|组织|进行|做)\s*(.{2,20}?)(?:，|。|$|的)/);
+    e['使用事由']=pm?pm[1]:'待确认';
+    e['参与人数'] = (/\d+人/.test(text) ? text.match(/(\d+)人/)[1]+'人' : '待确认');
     return e;
   }
 
   function extractMaintenanceEntities(text) {
     const e={};
-    const lm=text.match(/((?:男生|女生)?宿舍\d+[栋号楼号]?\d*)/);
-    const bm2=text.match(/(第[一二三四五六七八九十]+\s*(?:教学|实验)?楼)/);
-    e['报修位置']=lm?lm[0]:(bm2?bm2[0]:'待确认');
+
+    // ── 位置解析 (支持: 7A505 / 3A103 / 宿舍4栋502 等) ──
+    let loc='';
+    const roomCode = text.match(/([3-7][ABC]\d{2,3})/);
+    if (roomCode) {
+      const code = roomCode[1];
+      const before = text.substring(0, text.indexOf(code)).trim();
+      const bldMatch = before.match(/([^\s，。,，]{1,6}(?:楼|中心|区|馆|栋|教室|厅))/);
+      loc = bldMatch ? bldMatch[1] + ' ' + code : code;
+    }
+    if (!loc) {
+      const dorm = text.match(/((?:男生|女生)?宿舍\d+[栋号楼号]?\d*)/);
+      if (dorm) loc = dorm[0];
+    }
+    if (!loc) {
+      const bld = text.match(/(第[一二三四五六七八九十]+\s*(?:教学|实验)?楼)/);
+      if (bld) loc = bld[0];
+    }
+    e['报修位置']=loc||'待确认';
+
+    // ── 故障设备识别 ──
     const devs=[];
-    if(/空调/.test(text)) devs.push('空调（'+(/漏水/.test(text)?'漏水':'故障')+'）');
-    if(/插座/.test(text)) devs.push('插座（'+(/短路/.test(text)?'短路':'断电')+'）');
-    if(/水管/.test(text)) devs.push('水管（漏水）'); if(/马桶/.test(text)) devs.push('马桶（故障）');
-    if(/门锁/.test(text)) devs.push('门锁（损坏）'); if(/投影/.test(text)) devs.push('投影仪（故障）');
-    if(/窗户/.test(text)) devs.push('窗户（损坏）'); if(/灯/.test(text)) devs.push('灯具（不亮）');
-    if(devs.length===0){ const dm=text.match(/(.{1,6})(?:坏|故障|漏水|不亮|不好使)/); if(dm) devs.push(dm[1]+'（故障）'); }
+    const deviceMap = {
+      '空调': /空调/, '插座': /插座/, '水管': /水管/, '马桶': /马桶/,
+      '门锁': /门锁/, '投影仪': /投影/, '窗户': /窗户/, '灯具': /灯|灯泡|灯管/,
+      '电脑': /电脑|计算机/, '黑板': /黑板/, '桌椅': /桌子|椅子|课桌/,
+      '风扇': /风扇|电扇/, '热水器': /热水器/, '网络': /网络|网线|wifi|WiFi/,
+      '电梯': /电梯/, '水龙头': /水龙头/,
+    };
+    for (const [dev, re] of Object.entries(deviceMap)) {
+      if (re.test(text)) {
+        let symptom = '';
+        if(/漏水/.test(text)) symptom='漏水'; else if(/短路/.test(text)) symptom='短路';
+        else if(/断电/.test(text)) symptom='断电'; else if(/不亮/.test(text)) symptom='不亮';
+        else if(/损坏|坏了|破了/.test(text)) symptom='损坏'; else symptom='故障';
+        devs.push(dev + '（' + symptom + '）');
+      }
+    }
+    if(devs.length===0){ const dm=text.match(/(.{1,6})(?:坏|故障|漏水|不亮|不好使|修)/); if(dm) devs.push(dm[1]+'（故障）'); }
     e['故障设备']=devs.length?devs:['待确认'];
-    if(/短路|断电|漏电|着火|火灾|爆炸|赶紧|马上|立刻|紧急|严重/.test(text)) e['紧急程度']='🔴 紧急';
-    else if(/漏水|不停地|一直/.test(text)) e['紧急程度']='🟡 较急'; else e['紧急程度']='🟢 一般';
-    e['故障现象']=text.length>40?text.substring(0,40)+'...':text;
+
+    // ── 紧急程度 ──
+    if(/短路|断电|漏电|着火|火灾|爆炸|赶紧|马上|立刻|紧急|严重|安全隐患/.test(text)) e['紧急程度']='🔴 紧急';
+    else if(/漏水|不停地|一直|较急|尽快/.test(text)) e['紧急程度']='🟡 较急';
+    else e['紧急程度']='🟢 一般';
+
+    e['故障现象']=text.length>50?text.substring(0,50)+'...':text;
     e['报修人']='当前用户'; e['报修时间']=new Date().toLocaleString('zh-CN',{hour12:false}); e['工单状态']='待派单';
     return e;
+  }
+
+  // 预约冲突检测存储
+  const reservations = [];
+
+  function normalizeLocation(loc) {
+    return loc.replace(/\s+/g, '').replace(/[室厅房间报告厅教室会议室]$/, '').toLowerCase();
+  }
+
+  function checkConflict(location, dateStr, sp, ep) {
+    const normLoc = normalizeLocation(location);
+    const normDate = dateStr.trim();
+    return reservations.filter(r =>
+      normalizeLocation(r.location) === normLoc &&
+      r.dateStr.trim() === normDate &&
+      !(ep < r.startPeriod || sp > r.endPeriod)
+    );
   }
 
   function renderFormCard(intent, entities) {
     const cfg={leave:{title:'📋 请假申请单',color:'#4F6EF7'},reservation:{title:'📅 空间预约单',color:'#0EA5B9'},maintenance:{title:'🔧 故障报修单',color:'#EF4444'}};
     const c=cfg[intent];
-    let rows='';
-    for(const [k,v] of Object.entries(entities)){
-      let dv=Array.isArray(v)?v.map((x,i)=>`设备${i+1}：${x}`).join('<br>'):v;
-      rows+=`<div class="fc-row"><span class="fc-label">${k}</span><span class="fc-value">${dv}</span></div>`;
+
+    if (intent === 'leave') {
+      const sp = entities['起始节次'] || 1, ep = entities['结束节次'] || 10;
+      const lt = entities['请假类型'] || '事假';
+      const startDate = entities['起始日期'] || toDateInputValue('今天');
+      const startPart = entities['起始时段'] || '上午';
+      const endDate = entities['结束日期'] || toDateInputValue('今天');
+      const endPart = entities['结束时段'] || '下午';
+      const ltOptions = ['病假','事假','公假'].map(t => `<option value="${t}" ${t===lt?'selected':''}>${t}</option>`).join('');
+      const partOpts = dp => ['上午','下午','晚上','全天'].map(p => `<option value="${p}" ${p===dp?'selected':''}>${p}</option>`).join('');
+      const leaveDuration = entities['请假时长'] || calcPeriodDuration(sp, ep);
+      const otherRows = genRows(entities, ['起始节次','结束节次','起始时间','结束时间','请假节次','请假时长','请假类型','起始日期','起始时段','结束日期','结束时段'], ['请假人','请假日期','审批人']);
+      return `<div class="form-card" data-intent="leave">
+        <div class="fc-title" style="color:${c.color}">${c.title}</div>${otherRows}
+        <div class="fc-row leave-period-row"><span class="fc-label">请假类型</span><select class="period-select" data-role="leave-type">${ltOptions}</select></div>
+        <div class="fc-row leave-period-row">
+          <span class="fc-label">起始日期</span>
+          <input type="date" class="period-select" data-role="start-date" value="${startDate}" onchange="updateLeaveForm(this)" style="width:130px;font-size:11px;font-family:inherit;">
+          <select class="period-select" data-role="start-part" onchange="updateLeaveForm(this)" style="width:68px;">${partOpts(startPart)}</select>
+        </div>
+        <div class="fc-row leave-period-row">
+          <span class="fc-label">结束日期</span>
+          <input type="date" class="period-select" data-role="end-date" value="${endDate}" onchange="updateLeaveForm(this)" style="width:130px;font-size:11px;font-family:inherit;">
+          <select class="period-select" data-role="end-part" onchange="updateLeaveForm(this)" style="width:68px;">${partOpts(endPart)}</select>
+        </div>
+        <div class="fc-row leave-period-row"><span class="fc-label">起始节次</span><select class="period-select" data-role="start" onchange="updateLeaveForm(this)">${periodOptions(sp)}</select></div>
+        <div class="fc-row leave-period-row"><span class="fc-label">结束节次</span><select class="period-select" data-role="end" onchange="updateLeaveForm(this)">${periodOptions(ep)}</select></div>
+        <div class="fc-row"><span class="fc-label">起始时间</span><span class="fc-value leave-start-time">${periodStartTime(sp)}</span></div>
+        <div class="fc-row"><span class="fc-label">结束时间</span><span class="fc-value leave-end-time">${periodEndTime(ep)}</span></div>
+        <div class="fc-row"><span class="fc-label">请假节次</span><span class="fc-value leave-period-label">第${sp}-${ep}节</span></div>
+        <div class="fc-row"><span class="fc-label">请假时长</span><span class="fc-value leave-duration">${leaveDuration}</span></div>
+        ${actionButtons()}</div>`;
     }
-    return `<div class="form-card"><div class="fc-title" style="color:${c.color}">${c.title}</div>${rows}
-      <div class="fc-actions">
-        <button class="btn-cancel" onclick="var f=this.closest('.form-card');f.querySelector('.btn-submit').disabled=true;this.textContent='已取消';this.disabled=true;this.style.opacity='.5'">取消</button>
-        <button class="btn-submit" onclick="var f=this.closest('.form-card');this.disabled=true;this.textContent='已提交 ✓';f.querySelector('.btn-cancel').disabled=true;f.querySelector('.btn-cancel').style.opacity='.5';var t=document.createElement('div');t.className='submitted-tag';t.textContent='✓ 提交成功';f.appendChild(t);showToast('提交成功！')">确认提交</button>
-      </div></div>`;
+
+    if (intent === 'reservation') {
+      const sp = entities['起始节次'] || 1, ep = entities['结束节次'] || 4;
+      const loc = entities['具体位置'] || '待确认';
+      const dateStr = entities['预约日期'] || '今天';
+      const otherRows = genRows(entities, ['起始节次','结束节次','起始时间','结束时间','预约节次','预约时长','预约日期','具体位置']);
+      // 显示位置和日期（不可修改的字段）
+      const staticRows = genRows(entities, [], ['具体位置','预约日期']);
+      return `<div class="form-card" data-intent="reservation" data-location="${loc}" data-date="${dateStr}">
+        <div class="fc-title" style="color:${c.color}">${c.title}</div>${staticRows}
+        <div class="fc-row leave-period-row"><span class="fc-label">起始节次</span><select class="period-select" data-role="start" onchange="updateLeaveForm(this)">${periodOptions(sp)}</select></div>
+        <div class="fc-row leave-period-row"><span class="fc-label">结束节次</span><select class="period-select" data-role="end" onchange="updateLeaveForm(this)">${periodOptions(ep)}</select></div>
+        <div class="fc-row"><span class="fc-label">起始时间</span><span class="fc-value leave-start-time">${periodStartTime(sp)}</span></div>
+        <div class="fc-row"><span class="fc-label">结束时间</span><span class="fc-value leave-end-time">${periodEndTime(ep)}</span></div>
+        <div class="fc-row"><span class="fc-label">预约节次</span><span class="fc-value leave-period-label">第${sp}-${ep}节</span></div>
+        <div class="fc-row"><span class="fc-label">预约时长</span><span class="fc-value leave-duration">${calcPeriodDuration(sp, ep)}</span></div>
+        ${otherRows}
+        <div class="fc-actions">
+          <button class="btn-cancel" onclick="var f=this.closest('.form-card');f.querySelector('.btn-submit').disabled=true;this.textContent='已取消';this.disabled=true;this.style.opacity='.5'">取消</button>
+          <button class="btn-submit" onclick="handleReserveSubmit(this)">确认提交</button>
+        </div></div>`;
+    }
+
+    // 报修等通用表单
+    return `<div class="form-card"><div class="fc-title" style="color:${c.color}">${c.title}</div>${genRows(entities)}${actionButtons()}</div>`;
   }
+
+  function genRows(entities, excludeKeys, includeKeys) {
+    // includeKeys: if provided, only include these keys
+    const keys = includeKeys || Object.keys(entities).filter(k => !(excludeKeys||[]).includes(k));
+    return keys.map(k => {
+      let v = entities[k];
+      if (v === undefined) return '';
+      let dv = Array.isArray(v) ? v.map((x,i) => `设备${i+1}：${x}`).join('<br>') : v;
+      return `<div class="fc-row"><span class="fc-label">${k}</span><span class="fc-value">${dv}</span></div>`;
+    }).join('');
+  }
+
+  function actionButtons() {
+    return `<div class="fc-actions">
+      <button class="btn-cancel" onclick="var f=this.closest('.form-card');f.querySelector('.btn-submit').disabled=true;this.textContent='已取消';this.disabled=true;this.style.opacity='.5'">取消</button>
+      <button class="btn-submit" onclick="var f=this.closest('.form-card');this.disabled=true;this.textContent='已提交 ✓';f.querySelector('.btn-cancel').disabled=true;f.querySelector('.btn-cancel').style.opacity='.5';var t=document.createElement('div');t.className='submitted-tag';t.textContent='✓ 提交成功';f.appendChild(t);showToast('提交成功！')">确认提交</button>
+    </div>`;
+  }
+
+  // 预约提交 (带冲突检测)
+  window.handleReserveSubmit = function(btn) {
+    const card = btn.closest('.form-card');
+    const location = card.dataset.location;
+    const dateStr = card.dataset.date;
+    const sp = parseInt(card.querySelector('[data-role="start"]').value);
+    const ep = parseInt(card.querySelector('[data-role="end"]').value);
+
+    const conflicts = checkConflict(location, dateStr, sp, ep);
+    if (conflicts.length > 0) {
+      const detail = conflicts.map(r => `第${r.startPeriod}-${r.endPeriod}节`).join('、');
+      addMsg('agent', `<b style="color:#EF4444">⚠️ 预约冲突</b><br><br>${location} 在 <b>${dateStr} ${detail}</b> 已被其他申请预约，请更换时间段或选择其他教室。`);
+      scrollBottom();
+      return;
+    }
+
+    reservations.push({ location, dateStr, startPeriod: sp, endPeriod: ep });
+    btn.disabled = true; btn.textContent = '已提交 ✓';
+    card.querySelector('.btn-cancel').disabled = true;
+    card.querySelector('.btn-cancel').style.opacity = '.5';
+    const t = document.createElement('div'); t.className = 'submitted-tag';
+    t.textContent = '✓ 预约成功'; card.appendChild(t);
+    showToast('预约成功！');
+  };
+
+  // 节次联动更新 (兼容请假和预约)
+  window.updateLeaveForm = function(el) {
+    const card = el.closest('.form-card');
+    const role = el.dataset.role;
+
+    // 日期变更 → 同日用时段节次，跨天强制1-10节
+    if (role === 'start-date' || role === 'end-date') {
+      const sdEl = card.querySelector('[data-role="start-date"]');
+      const edEl = card.querySelector('[data-role="end-date"]');
+      if (sdEl && edEl && sdEl.value === edEl.value) {
+        const spp = periodFromDayPart(card.querySelector('[data-role="start-part"]').value);
+        const epp = periodFromDayPart(card.querySelector('[data-role="end-part"]').value);
+        card.querySelector('[data-role="start"]').value = spp.sp;
+        card.querySelector('[data-role="end"]').value = epp.ep;
+      } else if (sdEl && edEl) {
+        card.querySelector('[data-role="start"]').value = 1;
+        card.querySelector('[data-role="end"]').value = 10;
+      }
+    }
+
+    // 时段变更 → 同步更新节次选择器（仅同日有效）
+    if (role === 'start-part') {
+      const sdEl = card.querySelector('[data-role="start-date"]');
+      const edEl = card.querySelector('[data-role="end-date"]');
+      if (!sdEl || !edEl || sdEl.value === edEl.value) {
+        const pp = periodFromDayPart(el.value);
+        const sel = card.querySelector('[data-role="start"]');
+        sel.value = pp.sp; sel.dataset.prev = pp.sp;
+      }
+    }
+    if (role === 'end-part') {
+      const sdEl = card.querySelector('[data-role="start-date"]');
+      const edEl = card.querySelector('[data-role="end-date"]');
+      if (!sdEl || !edEl || sdEl.value === edEl.value) {
+        const pp = periodFromDayPart(el.value);
+        const sel = card.querySelector('[data-role="end"]');
+        sel.value = pp.ep; sel.dataset.prev = pp.ep;
+      }
+    }
+
+    const startSel = card.querySelector('[data-role="start"]');
+    const endSel = card.querySelector('[data-role="end"]');
+    const sp = parseInt(startSel.value);
+    const ep = parseInt(endSel.value);
+
+    // 节次校验
+    if ((role === 'start' || role === 'end') && sp > ep) {
+      el.value = el.dataset.prev; return;
+    }
+    if (role === 'start' || role === 'end') el.dataset.prev = el.value;
+
+    // 更新时间显示
+    card.querySelector('.leave-start-time').textContent = periodStartTime(sp);
+    card.querySelector('.leave-end-time').textContent = periodEndTime(ep);
+    card.querySelector('.leave-period-label').textContent = '第' + sp + '-' + ep + '节';
+
+    // 时长计算（多天感知）
+    const sdEl = card.querySelector('[data-role="start-date"]');
+    const edEl = card.querySelector('[data-role="end-date"]');
+    if (sdEl && edEl) {
+      const spVal = card.querySelector('[data-role="start-part"]').value;
+      const epVal = card.querySelector('[data-role="end-part"]').value;
+      card.querySelector('.leave-duration').textContent = calcLeaveDuration(sdEl.value, spVal, edEl.value, epVal);
+    } else {
+      card.querySelector('.leave-duration').textContent = calcPeriodDuration(sp, ep);
+    }
+  };
 
   // ── Process ───────────────────────────
   async function processMessage(text) {
